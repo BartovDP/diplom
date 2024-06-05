@@ -111,6 +111,20 @@
                 <ComboBox fx:id="responsibleComboBox" />
                 <Button text="Create Task" onAction="#handleCreateTask"/>
             </VBox>
+            <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
+                <Label text="Edit Task" styleClass="right-panel-title" />
+                <Label text="Task Name" />
+                <TextField fx:id="editTaskNameField" />
+                <Label text="Task Description" />
+                <TextArea fx:id="editTaskDescriptionArea" />
+                <Label text="Beginning Date" />
+                <DatePicker fx:id="editBeginningDatePicker" />
+                <Label text="Ending Date" />
+                <DatePicker fx:id="editEndingDatePicker" />
+                <Label text="Responsible for the Task" />
+                <ComboBox fx:id="editResponsibleComboBox" />
+                <Button text="Save Changes" onAction="#handleEditTask"/>
+            </VBox>
         </children>
     </VBox>
 </HBox>
