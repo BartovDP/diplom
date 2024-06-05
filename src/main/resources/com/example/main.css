@@ -1,0 +1,59 @@
+/* main.css */
+
+.menu-panel {
+    -fx-border-color: green;
+}
+
+.project-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}
+
+.board-scroll-pane {
+    -fx-border-color: yellow;
+}
+
+.task-group {
+    -fx-border-color: orange;
+}
+
+.task-group-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.right-panel {
+    -fx-border-color: red;
+}
+
+.right-panel-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.task-box {
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+}
+
+.task-label {
+    -fx-font-weight: bold;
+}
+
+.tags-pane {
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+    -fx-hgap: 5;
+}
+
+.login-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+}
+
+.error-message {
+    -fx-text-fill: red;
+    -fx-font-size: 14px;
+}

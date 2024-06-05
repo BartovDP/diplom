@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.ObservableList?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@main.css">
+    <!-- Left Panel (Menu) -->
+    <VBox fx:id="menuVBox" minWidth="250" prefWidth="250" spacing="10" styleClass="menu-panel">
+        <padding>
+            <Insets bottom="10" left="10" right="10" top="10" />
+        </padding>
+        <children>
+            <Label text="User Profile" />
+            <Label text="My Tasks" />
+            <Label text="Projects" onMouseClicked="#handleProjectsClick" />
+        </children>
+    </VBox>
+
+    <!-- Center Panel (Project Board) -->
+    <VBox HBox.hgrow="ALWAYS">
+        <Label text="Project Name" styleClass="project-title" />
+        <TabPane VBox.vgrow="ALWAYS">
+            <Tab text="Board View">
+                <ScrollPane fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="board-scroll-pane">
+                    <content>
+                        <HBox fx:id="projectBoardHBox" fillHeight="false" spacing="10">
+                            <padding>
+                                <Insets bottom="10" left="10" right="10" top="10" />
+                            </padding>
+                            <children>
+                                <!-- Task Group 1 -->
+                                <VBox fx:id="taskGroup1VBox" minWidth="250" prefWidth="250" spacing="10" styleClass="task-group">
+                                    <padding>
+                                        <Insets bottom="10" left="10" right="10" top="10" />
+                                    </padding>
+                                    <children>
+                                        <Label text="Task Group 1" styleClass="task-group-title" />
+                                        <Label text="Add task" onMouseClicked="#handleAddTask1"/>
+                                        <VBox fx:id="tasksVBox1" spacing="5" />
+                                    </children>
+                                </VBox>
+                                <!-- Task Group 2 -->
+                                <VBox fx:id="taskGroup2VBox" minWidth="250" prefWidth="250" spacing="10" styleClass="task-group">
+                                    <padding>
+                                        <Insets bottom="10" left="10" right="10" top="10" />
+                                    </padding>
+                                    <children>
+                                        <Label text="Task Group 2" styleClass="task-group-title" />
+                                        <Label text="Add task" onMouseClicked="#handleAddTask2"/>
+                                        <VBox fx:id="tasksVBox2" spacing="5" />
+                                    </children>
+                                </VBox>
+                                <!-- Task Group 3 -->
+                                <VBox fx:id="taskGroup3VBox" minWidth="250" prefWidth="250" spacing="10" styleClass="task-group">
+                                    <padding>
+                                        <Insets bottom="10" left="10" right="10" top="10" />
+                                    </padding>
+                                    <children>
+                                        <Label text="Task Group 3" styleClass="task-group-title" />
+                                        <Label text="Add task" onMouseClicked="#handleAddTask3"/>
+                                        <VBox fx:id="tasksVBox3" spacing="5" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </content>
+                </ScrollPane>
+            </Tab>
+            <Tab text="List View">
+                <!-- Placeholder for future content -->
+            </Tab>
+        </TabPane>
+    </VBox>
+
+    <!-- Right Panel -->
+    <VBox fx:id="rightPanelVBox" managed="false" minWidth="400" prefWidth="400" spacing="10" styleClass="right-panel" visible="false">
+        <padding>
+            <Insets bottom="10" left="10" right="10" top="10" />
+        </padding>
+        <children>
+            <VBox fx:id="projectCreateVBox" spacing="10" visible="false" managed="false">
+                <Label text="Project Create" styleClass="right-panel-title" />
+                <Label text="Project Name" />
+                <TextField fx:id="projectNameField" />
+                <Label text="Description" />
+                <TextArea fx:id="projectDescriptionArea" />
+                <Button text="Create Project" onAction="#handleCreateProject"/>
+            </VBox>
+            <VBox fx:id="taskCreateVBox" spacing="10" visible="false" managed="false">
+                <Label text="Task Create" styleClass="right-panel-title" />
+                <Label text="Task Name" />
+                <TextField fx:id="taskNameField" />
+                <Label text="Task Description" />
+                <TextArea fx:id="taskDescriptionArea" />
+                <Label text="Beginning Date" />
+                <DatePicker fx:id="beginningDatePicker" />
+                <Label text="Ending Date" />
+                <DatePicker fx:id="endingDatePicker" />
+                <Label text="Responsible for the Task" />
+                <ComboBox fx:id="responsibleComboBox" />
+                <Button text="Create Task" onAction="#handleCreateTask"/>
+            </VBox>
+        </children>
+    </VBox>
+</HBox>
