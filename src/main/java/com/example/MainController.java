@@ -6,6 +6,11 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class MainController {
@@ -66,9 +71,10 @@ public class MainController {
     @FXML
     private ComboBox<String> editResponsibleComboBox;
 
-    //private VBox currentTaskVBox;
+    private VBox currentTaskVBox;
     private VBox currentEditTaskBox;
     private VBox currentTaskGroupVBox;
+    private String currentTaskName;
 
     @FXML
     private void initialize() {
@@ -96,12 +102,10 @@ public class MainController {
     private void handleTaskClick(MouseEvent event) {
         currentEditTaskBox = (VBox) event.getSource();
         Label taskLabel = (Label) currentEditTaskBox.getChildren().get(0);
-        String taskName = taskLabel.getText();
+        currentTaskName = taskLabel.getText();
 
-        // Assuming the task data can be extracted from the currentEditTaskBox
-        // Fill edit fields with task data
-        editTaskNameField.setText(taskName);
-        // Fill other fields with task data as needed
+        // Заполняем поля данными из базы данных
+        fillEditTaskFields(currentTaskName);
 
         showRightPanel("editTask");
     }
@@ -146,6 +150,9 @@ public class MainController {
         System.out.println("Ending Date: " + endingDate);
         System.out.println("Responsible: " + responsible);
 
+        // Save task to database
+        saveTaskToDatabase(1, taskName, taskDescription, beginningDate, endingDate);
+
         addTaskToGroup(currentTaskGroupVBox, taskName);
         closeRightPanel();
     }
@@ -162,6 +169,9 @@ public class MainController {
         System.out.println("Beginning Date: " + beginningDate);
         System.out.println("Ending Date: " + endingDate);
         System.out.println("Responsible: " + responsible);
+
+        // Update task in database
+        updateTaskInDatabase(currentTaskName, taskName, taskDescription, beginningDate, endingDate);
 
         // Update task with new data
         Label taskLabel = (Label) currentEditTaskBox.getChildren().get(0);
@@ -262,5 +272,64 @@ public class MainController {
         editBeginningDatePicker.setValue(null);
         editEndingDatePicker.setValue(null);
         editResponsibleComboBox.setValue(null);
+    }
+
+    private void saveTaskToDatabase(int projId, String taskName, String taskDesc, LocalDate taskBeg, LocalDate taskEnd) {
+        String query = "INSERT INTO tasklist (proj_id, task_name, task_desc, task_beg, task_end) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, projId);
+            statement.setString(2, taskName);
+            statement.setString(3, taskDesc);
+            statement.setDate(4, java.sql.Date.valueOf(taskBeg));
+            statement.setDate(5, java.sql.Date.valueOf(taskEnd));
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateTaskInDatabase(String currentTaskName, String newTaskName, String taskDesc, LocalDate taskBeg, LocalDate taskEnd) {
+        String query = "UPDATE tasklist SET task_name = ?, task_desc = ?, task_beg = ?, task_end = ? WHERE task_name = ?";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, newTaskName);
+            statement.setString(2, taskDesc);
+            statement.setDate(3, java.sql.Date.valueOf(taskBeg));
+            statement.setDate(4, java.sql.Date.valueOf(taskEnd));
+            statement.setString(5, currentTaskName);
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fillEditTaskFields(String taskName) {
+        String query = "SELECT task_name, task_desc, task_beg, task_end FROM tasklist WHERE task_name = ?";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, taskName);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                editTaskNameField.setText(resultSet.getString("task_name"));
+                editTaskDescriptionArea.setText(resultSet.getString("task_desc"));
+                editBeginningDatePicker.setValue(resultSet.getDate("task_beg").toLocalDate());
+                editEndingDatePicker.setValue(resultSet.getDate("task_end").toLocalDate());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
