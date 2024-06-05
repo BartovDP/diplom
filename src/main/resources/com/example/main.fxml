@@ -9,9 +9,9 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -114,6 +114,8 @@
                 <DatePicker fx:id="endingDatePicker" />
                 <Label text="Responsible for the Task" />
                 <ComboBox fx:id="responsibleComboBox" />
+                <Label text="Tag" />
+                <ComboBox fx:id="tagComboBox" />
                 <Button text="Create Task" onAction="#handleCreateTask"/>
             </VBox>
             <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
