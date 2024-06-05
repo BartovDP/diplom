@@ -9,6 +9,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
@@ -23,7 +24,11 @@
         <children>
             <Label text="User Profile" />
             <Label text="My Tasks" />
-            <Label text="Projects" onMouseClicked="#handleProjectsClick" />
+            <TitledPane text="Projects" expanded="false">
+                <content>
+                    <VBox fx:id="projectsVBox" spacing="5" />
+                </content>
+            </TitledPane>
         </children>
     </VBox>
 

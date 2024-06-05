@@ -28,7 +28,7 @@ public class LoginController {
     @FXML
     private CheckBox rememberMeCheckBox;
 
-    private String username;
+    private static String username;
     private String password;
     private boolean rememberMe;
 
@@ -91,7 +91,7 @@ public class LoginController {
         }
     }
 
-    public String getUsername() {
+    public static String getUsername() {
         return username;
     }
 

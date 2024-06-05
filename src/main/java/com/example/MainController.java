@@ -71,16 +71,24 @@ public class MainController {
     @FXML
     private ComboBox<String> editResponsibleComboBox;
 
+    @FXML
+    private VBox projectsVBox;
+
     private VBox currentTaskVBox;
     private VBox currentEditTaskBox;
     private VBox currentTaskGroupVBox;
     private String currentTaskName;
+    private String username; // Имя пользователя, взятое из интерфейса входа
 
     @FXML
     private void initialize() {
         // Initialize ComboBox items
         responsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
         editResponsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
+
+        // Загрузка проектов для текущего пользователя
+        username = LoginController.getUsername();
+        loadProjectsForUser(username);
     }
 
     @FXML
@@ -331,5 +339,46 @@ public class MainController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getCurrentUsername() {
+        // This method should return the current logged-in username.
+        // For the purpose of this example, we use a hardcoded username.
+        return "user1";
+    }
+
+    private void loadProjectsForUser(String username) {
+        String query = "SELECT projects.proj_id, projects.proj_name, projects.proj_desc " +
+                "FROM projects " +
+                "JOIN pu_connector ON projects.proj_id = pu_connector.proj_id " +
+                "JOIN userlist ON pu_connector.user_id = userlist.user_id " +
+                "WHERE userlist.user_name = ?";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+
+            projectsVBox.getChildren().clear();
+            while (resultSet.next()) {
+                String projectName = resultSet.getString("proj_name");
+                String projectDescription = resultSet.getString("proj_desc");
+
+                Label projectLabel = new Label(projectName);
+                projectLabel.getStyleClass().add("project-label");
+                projectLabel.setOnMouseClicked(event -> handleProjectClick(projectName, projectDescription));
+
+                projectsVBox.getChildren().add(projectLabel);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleProjectClick(String projectName, String projectDescription) {
+        // Handle project click, e.g., display project details or switch to the project's tasks
+        System.out.println("Project clicked: " + projectName + " - " + projectDescription);
     }
 }
