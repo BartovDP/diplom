@@ -81,12 +81,10 @@ public class MainController {
     @FXML
     private HBox projectBoardHBox;
 
-    private VBox currentTaskVBox;
     private VBox currentEditTaskBox;
     private VBox currentTaskGroupVBox;
     private String currentTaskName;
     private int currentProjectId; // ID выбранного проекта
-    private int currentGroupTagId; // ID тега выбранной группы
 
     private String username; // Имя пользователя, взятое из интерфейса входа
 
@@ -110,16 +108,6 @@ public class MainController {
     }
 
     @FXML
-    private void handleMenu1Action() {
-        showRightPanel("task");
-    }
-
-    @FXML
-    private void handleMenu2Action() {
-        addTaskToFirstColumn();
-    }
-
-    @FXML
     private void handleTaskClick(MouseEvent event) {
         currentEditTaskBox = (VBox) event.getSource();
         Label taskLabel = (Label) currentEditTaskBox.getChildren().get(0);
@@ -129,30 +117,6 @@ public class MainController {
         fillEditTaskFields(currentTaskName);
 
         showRightPanel("editTask");
-    }
-
-    @FXML
-    private void handleAddTask1() {
-        currentTaskGroupVBox = tasksVBox1;
-        currentGroupTagId = getGroupTagId(currentTaskGroupVBox);
-        setTagForCurrentGroup(currentGroupTagId);
-        showRightPanel("task");
-    }
-
-    @FXML
-    private void handleAddTask2() {
-        currentTaskGroupVBox = tasksVBox2;
-        currentGroupTagId = getGroupTagId(currentTaskGroupVBox);
-        setTagForCurrentGroup(currentGroupTagId);
-        showRightPanel("task");
-    }
-
-    @FXML
-    private void handleAddTask3() {
-        currentTaskGroupVBox = tasksVBox3;
-        currentGroupTagId = getGroupTagId(currentTaskGroupVBox);
-        setTagForCurrentGroup(currentGroupTagId);
-        showRightPanel("task");
     }
 
     @FXML
@@ -245,27 +209,6 @@ public class MainController {
                 projectCreateVBox.setManaged(false);
                 break;
         }
-    }
-
-    private void addTaskToFirstColumn() {
-        addTask(tasksVBox1);
-    }
-
-    private void addTask(VBox tasksVBox) {
-        VBox taskBox = new VBox();
-        taskBox.setSpacing(5);
-        taskBox.getStyleClass().add("task-box");
-
-        taskBox.setOnMouseClicked(this::handleTaskClick);
-
-        Label taskLabel = new Label("Task");
-        taskLabel.getStyleClass().add("task-label");
-
-        FlowPane tagsPane = new FlowPane();
-        tagsPane.getStyleClass().add("tags-pane");
-
-        taskBox.getChildren().addAll(taskLabel, tagsPane);
-        tasksVBox.getChildren().add(taskBox);
     }
 
     private void addTaskToGroup(VBox taskGroup, String taskName) {
@@ -496,7 +439,7 @@ public class MainController {
                 projectBoardHBox.getChildren().add(taskGroup);
 
                 // Загрузка задач для данной группы
-                loadTasksForGroup(tagId, tasksVBox);
+                loadTasksForGroup(currentProjectId, tagId, groupId, tasksVBox);
             }
 
         } catch (SQLException e) {
@@ -504,18 +447,20 @@ public class MainController {
         }
     }
 
-    private void loadTasksForGroup(int tagId, VBox tasksVBox) {
-        String query = "SELECT t.task_name " +
+    private void loadTasksForGroup(int projId, int tagId, int groupId, VBox tasksVBox) {
+        String query = "SELECT DISTINCT t.task_name " +
                 "FROM tasklist t " +
                 "JOIN tag_connector tc ON t.task_id = tc.task_id " +
                 "JOIN taglist tl ON tc.tag_id = tl.tag_id " +
                 "JOIN grouplist g ON tl.tag_id = g.tag_id " +
-                "WHERE g.tag_id = ?";
+                "WHERE g.tag_id = ? AND t.proj_id = ? AND g.group_id = ?";
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setInt(1, tagId);
+            statement.setInt(2, projId);
+            statement.setInt(3, groupId);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -530,7 +475,6 @@ public class MainController {
 
     private void handleAddTask(int groupId, VBox taskGroup, int tagId) {
         currentTaskGroupVBox = taskGroup;
-        currentGroupTagId = tagId;
         setTagForCurrentGroup(tagId);
         showRightPanel("task");
     }
@@ -570,11 +514,5 @@ public class MainController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private int getGroupTagId(VBox taskGroup) {
-        // Метод для получения tag_id текущей группы (можно использовать id группы или другие параметры)
-        // Реализация зависит от структуры данных в проекте
-        return currentGroupTagId; // Placeholder
     }
 }

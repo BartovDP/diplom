@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@main.css">
+<HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@styles.css">
     <!-- Left Panel (Menu) -->
     <VBox fx:id="menuVBox" minWidth="250" prefWidth="250" spacing="10" styleClass="menu-panel">
         <padding>
@@ -24,7 +24,7 @@
         <children>
             <Label text="User Profile" />
             <Label text="My Tasks" />
-            <TitledPane text="Projects" expanded="false">
+            <TitledPane text="Projects" expanded="false" styleClass="titled-pane">
                 <content>
                     <VBox fx:id="projectsVBox" spacing="5" />
                 </content>
@@ -33,7 +33,7 @@
     </VBox>
 
     <!-- Center Panel (Project Board) -->
-    <VBox HBox.hgrow="ALWAYS">
+    <VBox HBox.hgrow="ALWAYS" styleClass="center-panel">
         <Label text="Project Name" styleClass="project-title" />
         <TabPane VBox.vgrow="ALWAYS">
             <Tab text="Board View">
@@ -44,39 +44,7 @@
                                 <Insets bottom="10" left="10" right="10" top="10" />
                             </padding>
                             <children>
-                                <!-- Task Group 1 -->
-                                <VBox fx:id="taskGroup1VBox" minWidth="250" prefWidth="250" spacing="10" styleClass="task-group">
-                                    <padding>
-                                        <Insets bottom="10" left="10" right="10" top="10" />
-                                    </padding>
-                                    <children>
-                                        <Label text="Task Group 1" styleClass="task-group-title" />
-                                        <Label text="Add task" onMouseClicked="#handleAddTask1"/>
-                                        <VBox fx:id="tasksVBox1" spacing="5" />
-                                    </children>
-                                </VBox>
-                                <!-- Task Group 2 -->
-                                <VBox fx:id="taskGroup2VBox" minWidth="250" prefWidth="250" spacing="10" styleClass="task-group">
-                                    <padding>
-                                        <Insets bottom="10" left="10" right="10" top="10" />
-                                    </padding>
-                                    <children>
-                                        <Label text="Task Group 2" styleClass="task-group-title" />
-                                        <Label text="Add task" onMouseClicked="#handleAddTask2"/>
-                                        <VBox fx:id="tasksVBox2" spacing="5" />
-                                    </children>
-                                </VBox>
-                                <!-- Task Group 3 -->
-                                <VBox fx:id="taskGroup3VBox" minWidth="250" prefWidth="250" spacing="10" styleClass="task-group">
-                                    <padding>
-                                        <Insets bottom="10" left="10" right="10" top="10" />
-                                    </padding>
-                                    <children>
-                                        <Label text="Task Group 3" styleClass="task-group-title" />
-                                        <Label text="Add task" onMouseClicked="#handleAddTask3"/>
-                                        <VBox fx:id="tasksVBox3" spacing="5" />
-                                    </children>
-                                </VBox>
+                                
                             </children>
                         </HBox>
                     </content>

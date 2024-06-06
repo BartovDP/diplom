@@ -1,145 +1,116 @@
 /* styles.css */
 
-/* General Styles */
+/* Main styles */
 .root {
-    -fx-font-family: 'Arial', sans-serif;
-    -fx-background-color: #1e272e;
+    -fx-font-family: 'Arial';
 }
 
-/* Menu Styles */
-#menuVBox {
-    -fx-background-color: linear-gradient(to bottom, #273c75, #192a56);
-    -fx-border-color: #192a56;
-    -fx-border-width: 2px;
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
-    -fx-padding: 10px;
-}
-
-#menuVBox Label {
-    -fx-text-fill: #dcdde1;
-    -fx-font-size: 14px;
-    -fx-padding: 5px;
-}
-
-#menuVBox Label:hover {
-    -fx-background-color: #34495e;
-    -fx-cursor: hand;
-}
-
-/* Project Board Styles */
-ScrollPane {
-    -fx-background: linear-gradient(to bottom, #1e272e, #0f1519); /* Background color for ScrollPane with gradient */
-}
-
-ScrollPane .viewport {
-    -fx-background: transparent; /* Ensure the viewport background is transparent to show the ScrollPane background */
-}
-
-#projectBoardHBox {
-    -fx-background-color: transparent;/*linear-gradient(to bottom, #2f3640, #1e272e); /* Dark background with gradient for HBox */
-    -fx-padding: 10px;
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
-}
-
-VBox {
-    -fx-background-color: linear-gradient(to bottom, #40739e, #192a56); /* Gradient for VBox */
-    -fx-border-color: #192a56;
-    -fx-border-width: 2px;
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
-    -fx-padding: 10px;
-}
-
-VBox Label {
-    -fx-text-fill: #dcdde1;
+/* Login styles */
+.login-title {
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
+}
+
+.error-message {
+    -fx-text-fill: red;
+}
+
+/* Menu styles */
+.menu-panel {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 10;
+}
+
+.menu-panel .label {
+    -fx-text-fill: white;
     -fx-font-size: 16px;
 }
 
-VBox Label:hover {
-    -fx-background-color: #273c75;
+.project-label {
     -fx-cursor: hand;
-}
-
-/* Task Group Styles */
-#taskGroup1VBox, #taskGroup2VBox, #taskGroup3VBox {
-    -fx-background-color: linear-gradient(to bottom, #487eb0, #273c75); /* Gradient for Task Groups */
-    -fx-border-color: #192a56;
-    -fx-border-width: 2px;
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
-    -fx-padding: 10px;
-}
-
-VBox #tasksVBox1, VBox #tasksVBox2, VBox #tasksVBox3 {
-    -fx-background-color: transparent; /* Gradient for Task Containers */
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
-}
-
-/* Right Panel Styles */
-#rightPanelVBox {
-    -fx-background-color: linear-gradient(to bottom, #353b48, #2f3640); /* Gradient for Right Panel */
-    -fx-border-color: #40739e;
-    -fx-border-width: 2px;
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
-    -fx-padding: 10px;
-}
-
-#rightPanelVBox Label {
-    -fx-text-fill: #dcdde1;
-    -fx-font-weight: bold;
+    -fx-text-fill: white;
     -fx-font-size: 16px;
 }
 
-/* Text Inputs Styles */
-#rightPanelVBox TextField, #rightPanelVBox TextArea {
-    -fx-background-color: transparent; /* Ensure no default background interferes */
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
+/* styles.css */
+.titled-pane {
+    -fx-background-color: #2c3e50;
+    -fx-border-color: #2c3e50;
+    -fx-border-width: 2;
 }
 
-#rightPanelVBox TextArea .content {
-    -fx-background-color: linear-gradient(to bottom, #2f3640, #1e272e); /* Gradient for TextArea */
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
+.titled-pane > .title {
+    -fx-background-color: #394f65;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
-#rightPanelVBox TextField {
-    -fx-background-color: linear-gradient(to bottom, #2f3640, #1e272e); /* Gradient for TextField */
-    -fx-border-radius: 10px; /* Rounded borders */
-    -fx-background-radius: 10px; /* Rounded background */
+.titled-pane > .content {
+    -fx-padding: 10;
+    -fx-background-color: #394f65;
+    -fx-border-color: #2c3e50;
 }
 
-#rightPanelVBox TextField:focused, #rightPanelVBox TextArea:focused .content {
-    -fx-border-color: #40739e;
+
+/* Right panel styles */
+.right-panel {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 10;
 }
 
-/* ScrollBar Styles */
-ScrollPane .scroll-bar {
-    -fx-background-color: transparent; /* Make scrollbar background transparent */
+.right-panel-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
 }
 
-ScrollPane .scroll-bar .thumb {
-    -fx-background-color: #34495e; /* Dark color for the scrollbar thumb */
-    -fx-background-insets: 0;
-    -fx-background-radius: 4px;
+/* Project Board styles */
+.board-scroll-pane {
+    -fx-background-color: #bdc3c7;
 }
 
-ScrollPane .scroll-bar:horizontal .thumb {
-    -fx-min-width: 10px;
-    -fx-max-width: 10px;
+.project-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 10 10;
 }
 
-ScrollPane .scroll-bar:vertical .thumb {
-    -fx-min-height: 10px;
-    -fx-max-height: 10px;
+.task-group {
+    -fx-background-color: #e74c3c;
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
 }
 
-ScrollPane .scroll-bar .increment-button,
-ScrollPane .scroll-bar .decrement-button {
-    -fx-background-color: transparent; /* Make increment and decrement buttons transparent */
+.task-group-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.add-task-label {
+    -fx-cursor: hand;
+    -fx-text-fill: white;
+}
+
+.task-box {
+    -fx-background-color: #3498db;
+    -fx-padding: 10;
+    -fx-spacing: 5;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.task-label {
+    -fx-text-fill: white;
+}
+
+.tags-pane {
+    -fx-spacing: 5;
+}
+
+/* Center Panel (Project Board) */
+.center-panel {
+    -fx-background-color: #bdc3c7;
 }
