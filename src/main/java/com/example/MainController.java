@@ -13,19 +13,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainController {
     @FXML
     private VBox rightPanelVBox;
-
-    @FXML
-    private VBox tasksVBox1;
-
-    @FXML
-    private VBox tasksVBox2;
-
-    @FXML
-    private VBox tasksVBox3;
 
     @FXML
     private VBox projectCreateVBox;
@@ -58,7 +51,10 @@ public class MainController {
     private ComboBox<String> responsibleComboBox;
 
     @FXML
-    private ComboBox<String> tagComboBox;
+    private ComboBox<String> availableTagsComboBox;
+
+    @FXML
+    private FlowPane taskTagsPane;
 
     @FXML
     private TextField editTaskNameField;
@@ -76,6 +72,12 @@ public class MainController {
     private ComboBox<String> editResponsibleComboBox;
 
     @FXML
+    private ComboBox<String> editAvailableTagsComboBox;
+
+    @FXML
+    private FlowPane editTaskTagsPane;
+
+    @FXML
     private VBox projectsVBox;
 
     @FXML
@@ -84,9 +86,11 @@ public class MainController {
     private VBox currentEditTaskBox;
     private VBox currentTaskGroupVBox;
     private String currentTaskName;
+    private String currentProjectName;
     private int currentProjectId; // ID выбранного проекта
 
     private String username; // Имя пользователя, взятое из интерфейса входа
+    private Set<String> currentTaskTags; // Теги текущей задачи
 
     @FXML
     private void initialize() {
@@ -103,24 +107,20 @@ public class MainController {
     }
 
     @FXML
-    private void handleProjectsClick(MouseEvent event) {
-        showRightPanel("project");
-    }
-
-    @FXML
-    private void handleTaskClick(MouseEvent event) {
+    private void handleTaskClick(MouseEvent event) { //нажатие на задачу открывает редактирование задачи
         currentEditTaskBox = (VBox) event.getSource();
         Label taskLabel = (Label) currentEditTaskBox.getChildren().get(0);
         currentTaskName = taskLabel.getText();
 
         // Заполняем поля данными из базы данных
         fillEditTaskFields(currentTaskName);
+        loadTaskTags(currentTaskName, editTaskTagsPane, editAvailableTagsComboBox);
 
         showRightPanel("editTask");
     }
 
     @FXML
-    private void handleCreateProject() {
+    private void handleCreateProject() { //создание
         String projectName = projectNameField.getText();
         String projectDescription = projectDescriptionArea.getText();
         System.out.println("Project Created: " + projectName + " - " + projectDescription);
@@ -130,50 +130,118 @@ public class MainController {
 
     @FXML
     private void handleCreateTask() {
-        String taskName = taskNameField.getText();
-        String taskDescription = taskDescriptionArea.getText();
-        LocalDate beginningDate = beginningDatePicker.getValue();
-        LocalDate endingDate = endingDatePicker.getValue();
-        String responsible = responsibleComboBox.getValue();
-        String tag = tagComboBox.getValue();
-
-        System.out.println("Task Created: " + taskName + " - " + taskDescription);
-        System.out.println("Beginning Date: " + beginningDate);
-        System.out.println("Ending Date: " + endingDate);
-        System.out.println("Responsible: " + responsible);
-        System.out.println("Tag: " + tag);
-
-        // Save task to database and get task_id
-        int taskId = saveTaskToDatabase(currentProjectId, taskName, taskDescription, beginningDate, endingDate);
-
-        // Save tag to task
-        saveTagToTask(tag, taskId);
-
-        addTaskToGroup(currentTaskGroupVBox, taskName);
-        closeRightPanel();
+        handleSaveTask(false);
     }
 
     @FXML
     private void handleEditTask() {
-        String taskName = editTaskNameField.getText();
-        String taskDescription = editTaskDescriptionArea.getText();
-        LocalDate beginningDate = editBeginningDatePicker.getValue();
-        LocalDate endingDate = editEndingDatePicker.getValue();
-        String responsible = editResponsibleComboBox.getValue();
+        handleSaveTask(true);
+    }
 
-        System.out.println("Task Edited: " + taskName + " - " + taskDescription);
+
+    @FXML
+    private void handleSaveTask(boolean isEditMode) {
+        String taskName, taskDescription, responsible;
+        LocalDate beginningDate, endingDate;
+        FlowPane tagsPane;
+
+        if (isEditMode) {
+            taskName = editTaskNameField.getText();
+            taskDescription = editTaskDescriptionArea.getText();
+            beginningDate = editBeginningDatePicker.getValue();
+            endingDate = editEndingDatePicker.getValue();
+            responsible = editResponsibleComboBox.getValue();
+            tagsPane = editTaskTagsPane;
+        } else {
+            taskName = taskNameField.getText();
+            taskDescription = taskDescriptionArea.getText();
+            beginningDate = beginningDatePicker.getValue();
+            endingDate = endingDatePicker.getValue();
+            responsible = responsibleComboBox.getValue();
+            tagsPane = taskTagsPane;
+        }
+
+        System.out.println("Task " + (isEditMode ? "Edited: " : "Created: ") + taskName + " - " + taskDescription);
         System.out.println("Beginning Date: " + beginningDate);
         System.out.println("Ending Date: " + endingDate);
         System.out.println("Responsible: " + responsible);
 
-        // Update task in database
-        updateTaskInDatabase(currentTaskName, taskName, taskDescription, beginningDate, endingDate);
+        if (isEditMode) {
+            // Update task in database
+            updateTaskInDatabase(currentTaskName, taskName, taskDescription, beginningDate, endingDate);
+            // Update tags in database
+            updateTagsForTask(taskName, tagsPane);
+        } else {
+            // Save task to database and get task_id
+            int taskId = saveTaskToDatabase(currentProjectId, taskName, taskDescription, beginningDate, endingDate);
+            // Save tags to task
+            saveTagsToTask(tagsPane, taskId);
+        }
 
-        // Update task with new data
-        Label taskLabel = (Label) currentEditTaskBox.getChildren().get(0);
-        taskLabel.setText(taskName);
-        // Update other fields of the task as needed
+        // Reload task groups for the project to reflect changes in the UI
+        projectBoardHBox.getChildren().clear();
+        loadTaskGroupsForProject(currentProjectName);
 
+        closeRightPanel();
+    }
+
+    @FXML
+    private void handleDeleteTask() {
+        deleteTaskFromDatabase(currentTaskName);
+        projectBoardHBox.getChildren().clear();
+        loadTaskGroupsForProject(currentProjectName);
+        closeRightPanel();
+    }
+
+    private void deleteTaskFromDatabase(String taskName) {
+        String query = "DELETE FROM tasklist WHERE task_name = ?";
+
+        try (Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, taskName);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleTagSelection(ComboBox<String> tagComboBox, FlowPane tagsPane) {
+        String selectedTag = tagComboBox.getValue();
+        if (selectedTag != null) {
+            Label tagLabel = new Label(selectedTag);
+            tagLabel.setOnMouseClicked(this::handleTagDoubleClick); // Добавляем обработчик двойного нажатия
+            tagsPane.getChildren().add(tagLabel);
+            tagComboBox.getItems().remove(selectedTag);
+            tagComboBox.setValue(null);
+        }
+    }
+
+    @FXML
+    private void handleTagSelection() {
+        handleTagSelection(availableTagsComboBox, taskTagsPane);
+    }
+
+    @FXML
+    private void handleEditTagSelection() {
+        handleTagSelection(editAvailableTagsComboBox, editTaskTagsPane);
+    }
+
+
+    private void handleTagDoubleClick(MouseEvent event) {
+        if (event.getClickCount() == 2) {
+            Label tagLabel = (Label) event.getSource();
+            FlowPane tagsPane = (FlowPane) tagLabel.getParent();
+            tagsPane.getChildren().remove(tagLabel);
+            ComboBox<String> tagComboBox = tagsPane == taskTagsPane ? availableTagsComboBox : editAvailableTagsComboBox;
+            tagComboBox.getItems().add(tagLabel.getText());
+        }
+    }
+
+    @FXML
+    private void handleCancel() {
         closeRightPanel();
     }
 
@@ -242,12 +310,15 @@ public class MainController {
         beginningDatePicker.setValue(null);
         endingDatePicker.setValue(null);
         responsibleComboBox.setValue(null);
-        tagComboBox.setValue(null);
+        availableTagsComboBox.setValue(null);
+        taskTagsPane.getChildren().clear();
         editTaskNameField.clear();
         editTaskDescriptionArea.clear();
         editBeginningDatePicker.setValue(null);
         editEndingDatePicker.setValue(null);
         editResponsibleComboBox.setValue(null);
+        editAvailableTagsComboBox.setValue(null);
+        editTaskTagsPane.getChildren().clear();
     }
 
     private int saveTaskToDatabase(int projId, String taskName, String taskDesc, LocalDate taskBeg, LocalDate taskEnd) {
@@ -275,6 +346,12 @@ public class MainController {
         }
 
         return taskId;
+    }
+
+    private void saveTagsToTask(FlowPane tagsPane, int taskId) {
+        for (String tagName : getTagsFromPane(tagsPane)) {
+            saveTagToTask(tagName, taskId);
+        }
     }
 
     private void saveTagToTask(String tagName, int taskId) {
@@ -337,6 +414,50 @@ public class MainController {
         }
     }
 
+    private void updateTagsForTask(String taskName, FlowPane tagsPane) {
+        int taskId = getTaskId(taskName);
+
+        if (taskId != -1) {
+            removeAllTagsFromTask(taskId);
+            saveTagsToTask(tagsPane, taskId);
+        }
+    }
+
+    private void removeAllTagsFromTask(int taskId) {
+        String query = "DELETE FROM tag_connector WHERE task_id = ?";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, taskId);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getTaskId(String taskName) {
+        String query = "SELECT task_id FROM tasklist WHERE task_name = ?";
+        int taskId = -1;
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, taskName);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                taskId = resultSet.getInt("task_id");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return taskId;
+    }
+
     private void fillEditTaskFields(String taskName) {
         String query = "SELECT task_name, task_desc, task_beg, task_end FROM tasklist WHERE task_name = ?";
 
@@ -392,6 +513,7 @@ public class MainController {
     private void handleProjectClick(int projectId, String projectName) {
         // Запоминаем выбранный проект
         currentProjectId = projectId;
+        currentProjectName = projectName;
 
         // Clear the current project board
         projectBoardHBox.getChildren().clear();
@@ -476,6 +598,7 @@ public class MainController {
     private void handleAddTask(int groupId, VBox taskGroup, int tagId) {
         currentTaskGroupVBox = taskGroup;
         setTagForCurrentGroup(tagId);
+        loadAvailableTags(availableTagsComboBox);
         showRightPanel("task");
     }
 
@@ -489,7 +612,29 @@ public class MainController {
 
             while (resultSet.next()) {
                 String tagName = resultSet.getString("tag_name");
-                tagComboBox.getItems().add(tagName);
+                availableTagsComboBox.getItems().add(tagName);
+                editAvailableTagsComboBox.getItems().add(tagName);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadAvailableTags(ComboBox<String> comboBox) {
+        comboBox.getItems().clear();
+        String query = "SELECT tag_name FROM taglist";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String tagName = resultSet.getString("tag_name");
+                if (!currentTaskTags.contains(tagName)) {
+                    comboBox.getItems().add(tagName);
+                }
             }
 
         } catch (SQLException e) {
@@ -508,11 +653,53 @@ public class MainController {
 
             if (resultSet.next()) {
                 String tagName = resultSet.getString("tag_name");
-                tagComboBox.setValue(tagName);
+                taskTagsPane.getChildren().clear();
+                taskTagsPane.getChildren().add(new Label(tagName));
+                currentTaskTags = new HashSet<>();
+                currentTaskTags.add(tagName);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    private Set<String> getTagsFromPane(FlowPane tagsPane) {
+        Set<String> tags = new HashSet<>();
+        for (javafx.scene.Node node : tagsPane.getChildren()) {
+            if (node instanceof Label) {
+                tags.add(((Label) node).getText());
+            }
+        }
+        return tags;
+    }
+
+    private void loadTaskTags(String taskName, FlowPane tagsPane, ComboBox<String> availableTagsComboBox) {
+        tagsPane.getChildren().clear();
+        currentTaskTags = new HashSet<>();
+        String query = "SELECT tag_name FROM taglist tl " +
+                "JOIN tag_connector tc ON tl.tag_id = tc.tag_id " +
+                "JOIN tasklist t ON tc.task_id = t.task_id " +
+                "WHERE t.task_name = ?";
+    
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+    
+            statement.setString(1, taskName);
+            ResultSet resultSet = statement.executeQuery();
+    
+            while (resultSet.next()) {
+                String tagName = resultSet.getString("tag_name");
+                Label tagLabel = new Label(tagName);
+                tagLabel.setOnMouseClicked(this::handleTagDoubleClick); // Добавляем обработчик двойного нажатия
+                tagsPane.getChildren().add(tagLabel);
+                currentTaskTags.add(tagName);
+            }
+    
+            loadAvailableTags(availableTagsComboBox);
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }    
 }

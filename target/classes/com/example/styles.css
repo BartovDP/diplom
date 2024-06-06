@@ -45,6 +45,10 @@
     -fx-font-weight: bold;
 }
 
+.titled-pane > .title > .text {
+    -fx-fill: white;  /* Ensures the text color is applied */
+}
+
 .titled-pane > .content {
     -fx-padding: 10;
     -fx-background-color: #394f65;

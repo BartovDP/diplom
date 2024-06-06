@@ -12,6 +12,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -51,7 +52,9 @@
                 </ScrollPane>
             </Tab>
             <Tab text="List View">
-                <!-- Placeholder for future content -->
+                <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
+                
+                </VBox>
             </Tab>
         </TabPane>
     </VBox>
@@ -69,6 +72,7 @@
                 <Label text="Description" />
                 <TextArea fx:id="projectDescriptionArea" />
                 <Button text="Create Project" onAction="#handleCreateProject"/>
+                <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
             <VBox fx:id="taskCreateVBox" spacing="10" visible="false" managed="false">
                 <Label text="Task Create" styleClass="right-panel-title" />
@@ -82,11 +86,13 @@
                 <DatePicker fx:id="endingDatePicker" />
                 <Label text="Responsible for the Task" />
                 <ComboBox fx:id="responsibleComboBox" />
-                <Label text="Tag" />
-                <ComboBox fx:id="tagComboBox" />
+                <Label text="Tags" />
+                <FlowPane fx:id="taskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" />
+                <ComboBox fx:id="availableTagsComboBox" promptText="Add Tag" onAction="#handleTagSelection"/>
                 <Button text="Create Task" onAction="#handleCreateTask"/>
+                <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
-            <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
+                <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
                 <Label text="Edit Task" styleClass="right-panel-title" />
                 <Label text="Task Name" />
                 <TextField fx:id="editTaskNameField" />
@@ -98,7 +104,12 @@
                 <DatePicker fx:id="editEndingDatePicker" />
                 <Label text="Responsible for the Task" />
                 <ComboBox fx:id="editResponsibleComboBox" />
+                <Label text="Tags" />
+                <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" />
+                <ComboBox fx:id="editAvailableTagsComboBox" promptText="Add Tag" onAction="#handleEditTagSelection"/>
                 <Button text="Save Changes" onAction="#handleEditTask"/>
+                <Button text="Delete Task" onAction="#handleDeleteTask" />
+                <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
         </children>
     </VBox>
