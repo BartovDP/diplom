@@ -33,30 +33,44 @@
         </children>
     </VBox>
 
-    <!-- Center Panel (Project Board) -->
-    <VBox HBox.hgrow="ALWAYS" styleClass="center-panel">
-        <Label text="Project Name" styleClass="project-title" />
-        <TabPane VBox.vgrow="ALWAYS">
-            <Tab text="Board View">
-                <ScrollPane fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="board-scroll-pane">
-                    <content>
-                        <HBox fx:id="projectBoardHBox" fillHeight="false" spacing="10">
-                            <padding>
-                                <Insets bottom="10" left="10" right="10" top="10" />
-                            </padding>
-                            <children>
-                                
-                            </children>
-                        </HBox>
-                    </content>
-                </ScrollPane>
-            </Tab>
-            <Tab text="List View">
-                <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
-                
-                </VBox>
-            </Tab>
-        </TabPane>
+    <VBox fx:id="centerPanelVBox" HBox.hgrow="ALWAYS" styleClass="center-panel">
+        <!-- Home View -->
+        <VBox fx:id="homeViewVBox" visible="true" managed="true" VBox.vgrow="ALWAYS">
+            <Label text="Home" styleClass="home-title" />
+            <!-- Content for Home view -->
+        </VBox>
+
+        <!-- Project View -->
+        <VBox fx:id="projectViewVBox" visible="false" managed="false" VBox.vgrow="ALWAYS">
+            <Label text="Project View" styleClass="project-title" />
+            <TabPane VBox.vgrow="ALWAYS">
+                <Tab text="Board View">
+                    <ScrollPane fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="board-scroll-pane">
+                        <content>
+                            <HBox fx:id="projectBoardHBox" fillHeight="false" spacing="10">
+                                <padding>
+                                    <Insets bottom="10" left="10" right="10" top="10" />
+                                </padding>
+                                <children>
+                                    <!-- Project View content -->
+                                </children>
+                            </HBox>
+                        </content>
+                    </ScrollPane>
+                </Tab>
+                <Tab text="List View">
+                    <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
+                        <!-- List View content -->
+                    </VBox>
+                </Tab>
+            </TabPane>
+        </VBox>
+
+        <!-- Create Project View -->
+        <VBox fx:id="createProjectViewVBox" visible="false" managed="false" VBox.vgrow="ALWAYS">
+            <Label text="Create Project" styleClass="create-project-title" />
+            <!-- Content for Create Project view -->
+        </VBox>
     </VBox>
 
     <!-- Right Panel -->

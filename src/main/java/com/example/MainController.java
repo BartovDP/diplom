@@ -14,7 +14,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.example.Entities.Group;
+import com.example.Entities.Project;
+import com.example.Entities.ProjectDetails;
+import com.example.Entities.Tags;
+import com.example.Entities.Task;
+import com.example.Entities.TaskDetails;
 
 public class MainController {
     @FXML
@@ -83,6 +91,16 @@ public class MainController {
     @FXML
     private HBox projectBoardHBox;
 
+    @FXML
+    private VBox homeViewVBox;
+
+    @FXML
+    private VBox projectViewVBox;
+
+    @FXML
+    private VBox createProjectViewVBox;
+
+
     private VBox currentEditTaskBox;
     private VBox currentTaskGroupVBox;
     private String currentTaskName;
@@ -94,25 +112,21 @@ public class MainController {
 
     @FXML
     private void initialize() {
-        // Initialize ComboBox items
         responsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
         editResponsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
 
-        // Загрузка имени пользователя из LoginController
         username = LoginController.getUsername();
         loadProjectsForUser(username);
 
-        // Загрузка тегов в выпадающий список
         loadTags();
     }
 
     @FXML
-    private void handleTaskClick(MouseEvent event) { //нажатие на задачу открывает редактирование задачи
+    private void handleTaskClick(MouseEvent event) {
         currentEditTaskBox = (VBox) event.getSource();
         Label taskLabel = (Label) currentEditTaskBox.getChildren().get(0);
         currentTaskName = taskLabel.getText();
 
-        // Заполняем поля данными из базы данных
         fillEditTaskFields(currentTaskName);
         loadTaskTags(currentTaskName, editTaskTagsPane, editAvailableTagsComboBox);
 
@@ -161,20 +175,11 @@ public class MainController {
             tagsPane = taskTagsPane;
         }
 
-        System.out.println("Task " + (isEditMode ? "Edited: " : "Created: ") + taskName + " - " + taskDescription);
-        System.out.println("Beginning Date: " + beginningDate);
-        System.out.println("Ending Date: " + endingDate);
-        System.out.println("Responsible: " + responsible);
-
         if (isEditMode) {
-            // Update task in database
-            updateTaskInDatabase(currentTaskName, taskName, taskDescription, beginningDate, endingDate);
-            // Update tags in database
+            Task.updateTask(currentTaskName, taskName, taskDescription, beginningDate, endingDate);
             updateTagsForTask(taskName, tagsPane);
         } else {
-            // Save task to database and get task_id
-            int taskId = saveTaskToDatabase(currentProjectId, taskName, taskDescription, beginningDate, endingDate);
-            // Save tags to task
+            int taskId = Task.saveTask(currentProjectId, taskName, taskDescription, beginningDate, endingDate);
             saveTagsToTask(tagsPane, taskId);
         }
 
@@ -187,24 +192,10 @@ public class MainController {
 
     @FXML
     private void handleDeleteTask() {
-        deleteTaskFromDatabase(currentTaskName);
+        Task.deleteTask(currentTaskName);
         projectBoardHBox.getChildren().clear();
         loadTaskGroupsForProject(currentProjectName);
         closeRightPanel();
-    }
-
-    private void deleteTaskFromDatabase(String taskName) {
-        String query = "DELETE FROM tasklist WHERE task_name = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, taskName);
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @FXML
@@ -279,22 +270,34 @@ public class MainController {
         }
     }
 
-    private void addTaskToGroup(VBox taskGroup, String taskName) {
+    private void addTaskToGroup(VBox taskGroup, String taskName, List<String> tags) {
         VBox taskBox = new VBox();
         taskBox.setSpacing(5);
         taskBox.getStyleClass().add("task-box");
-
+    
         taskBox.setOnMouseClicked(this::handleTaskClick);
-
+    
         Label taskLabel = new Label(taskName);
         taskLabel.getStyleClass().add("task-label");
-
+    
         FlowPane tagsPane = new FlowPane();
         tagsPane.getStyleClass().add("tags-pane");
-
+    
+        // Отрисовать теги для задачи
+        renderTaskTags(tagsPane, tags);
+    
         taskBox.getChildren().addAll(taskLabel, tagsPane);
         taskGroup.getChildren().add(taskBox);
-    }
+    }    
+
+    private void renderTaskTags(FlowPane tagsPane, List<String> tags) {
+        tagsPane.getChildren().clear(); // Очистить существующие теги
+        for (String tag : tags) {
+            Label tagLabel = new Label(tag);
+            tagLabel.getStyleClass().add("tag-label");
+            tagsPane.getChildren().add(tagLabel);
+        }
+    }    
 
     private void closeRightPanel() {
         rightPanelVBox.setVisible(false);
@@ -321,348 +324,132 @@ public class MainController {
         editTaskTagsPane.getChildren().clear();
     }
 
-    private int saveTaskToDatabase(int projId, String taskName, String taskDesc, LocalDate taskBeg, LocalDate taskEnd) {
-        String query = "INSERT INTO tasklist (proj_id, task_name, task_desc, task_beg, task_end) VALUES (?, ?, ?, ?, ?)";
-        int taskId = -1;
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
-            statement.setInt(1, projId);
-            statement.setString(2, taskName);
-            statement.setString(3, taskDesc);
-            statement.setDate(4, java.sql.Date.valueOf(taskBeg));
-            statement.setDate(5, java.sql.Date.valueOf(taskEnd));
-
-            statement.executeUpdate();
-
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                taskId = generatedKeys.getInt(1);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return taskId;
-    }
-
     private void saveTagsToTask(FlowPane tagsPane, int taskId) {
         for (String tagName : getTagsFromPane(tagsPane)) {
-            saveTagToTask(tagName, taskId);
-        }
-    }
-
-    private void saveTagToTask(String tagName, int taskId) {
-        int tagId = getTagId(tagName);
-
-        if (tagId != -1) {
-            String query = "INSERT INTO tag_connector (tag_id, task_id) VALUES (?, ?)";
-
-            try (Connection connection = DatabaseManager.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(query)) {
-
-                statement.setInt(1, tagId);
-                statement.setInt(2, taskId);
-
-                statement.executeUpdate();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private int getTagId(String tagName) {
-        String query = "SELECT tag_id FROM taglist WHERE tag_name = ?";
-        int tagId = -1;
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, tagName);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                tagId = resultSet.getInt("tag_id");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return tagId;
-    }
-
-    private void updateTaskInDatabase(String currentTaskName, String newTaskName, String taskDesc, LocalDate taskBeg, LocalDate taskEnd) {
-        String query = "UPDATE tasklist SET task_name = ?, task_desc = ?, task_beg = ?, task_end = ? WHERE task_name = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, newTaskName);
-            statement.setString(2, taskDesc);
-            statement.setDate(3, java.sql.Date.valueOf(taskBeg));
-            statement.setDate(4, java.sql.Date.valueOf(taskEnd));
-            statement.setString(5, currentTaskName);
-
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            Tags.saveTagToTask(tagName, taskId);
         }
     }
 
     private void updateTagsForTask(String taskName, FlowPane tagsPane) {
-        int taskId = getTaskId(taskName);
-
+        int taskId = Task.getTaskId(taskName);
+    
         if (taskId != -1) {
-            removeAllTagsFromTask(taskId);
+            Tags.removeAllTagsFromTask(taskId);
             saveTagsToTask(tagsPane, taskId);
         }
-    }
-
-    private void removeAllTagsFromTask(int taskId) {
-        String query = "DELETE FROM tag_connector WHERE task_id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setInt(1, taskId);
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private int getTaskId(String taskName) {
-        String query = "SELECT task_id FROM tasklist WHERE task_name = ?";
-        int taskId = -1;
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, taskName);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                taskId = resultSet.getInt("task_id");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return taskId;
-    }
+    }    
 
     private void fillEditTaskFields(String taskName) {
-        String query = "SELECT task_name, task_desc, task_beg, task_end FROM tasklist WHERE task_name = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, taskName);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                editTaskNameField.setText(resultSet.getString("task_name"));
-                editTaskDescriptionArea.setText(resultSet.getString("task_desc"));
-                editBeginningDatePicker.setValue(resultSet.getDate("task_beg").toLocalDate());
-                editEndingDatePicker.setValue(resultSet.getDate("task_end").toLocalDate());
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        TaskDetails taskDetails = Task.getTaskDetails(taskName);
+    
+        if (taskDetails != null) {
+            editTaskNameField.setText(taskDetails.getTaskName());
+            editTaskDescriptionArea.setText(taskDetails.getTaskDescription());
+            editBeginningDatePicker.setValue(taskDetails.getBeginningDate());
+            editEndingDatePicker.setValue(taskDetails.getEndingDate());
         }
-    }
+    }    
 
     private void loadProjectsForUser(String username) {
-        String query = "SELECT projects.proj_id, projects.proj_name, projects.proj_desc " +
-                "FROM projects " +
-                "JOIN pu_connector ON projects.proj_id = pu_connector.proj_id " +
-                "JOIN userlist ON pu_connector.user_id = userlist.user_id " +
-                "WHERE userlist.user_name = ?";
+        List<ProjectDetails> projects = Project.getProjectsForUser(username);
 
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        projectsVBox.getChildren().clear();
+        for (ProjectDetails project : projects) {
+            int projectId = project.getProjectId();
+            String projectName = project.getProjectName();
+            String projectDescription = project.getProjectDescription();
 
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
+            Label projectLabel = new Label(projectName);
+            projectLabel.getStyleClass().add("project-label");
+            projectLabel.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
 
-            projectsVBox.getChildren().clear();
-            while (resultSet.next()) {
-                int projectId = resultSet.getInt("proj_id");
-                String projectName = resultSet.getString("proj_name");
-                String projectDescription = resultSet.getString("proj_desc");
-
-                Label projectLabel = new Label(projectName);
-                projectLabel.getStyleClass().add("project-label");
-                projectLabel.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
-
-                projectsVBox.getChildren().add(projectLabel);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            projectsVBox.getChildren().add(projectLabel);
         }
     }
 
     private void handleProjectClick(int projectId, String projectName) {
-        // Запоминаем выбранный проект
         currentProjectId = projectId;
         currentProjectName = projectName;
-
-        // Clear the current project board
         projectBoardHBox.getChildren().clear();
-
-        // Load task groups for the selected project
         loadTaskGroupsForProject(projectName);
+        setViewVisibility(projectViewVBox);
     }
 
     private void loadTaskGroupsForProject(String projectName) {
-        String query = "SELECT g.group_id, g.position, g.group_name, g.tag_id " +
-                "FROM grouplist g " +
-                "JOIN projects p ON g.proj_id = p.proj_id " +
-                "WHERE p.proj_name = ? " +
-                "ORDER BY g.position";
+        List<Group> groups = Tags.getGroupsForProject(projectName);
 
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        for (Group group : groups) {
+            int groupId = group.getGroupId();
+            String groupName = group.getGroupName();
+            int tagId = group.getTagId();
 
-            statement.setString(1, projectName);
-            ResultSet resultSet = statement.executeQuery();
+            VBox taskGroup = new VBox();
+            taskGroup.setMinWidth(250);
+            taskGroup.setPrefWidth(250);
+            taskGroup.setSpacing(10);
+            taskGroup.getStyleClass().add("task-group");
 
-            while (resultSet.next()) {
-                int groupId = resultSet.getInt("group_id");
-                String groupName = resultSet.getString("group_name");
-                int tagId = resultSet.getInt("tag_id");
+            Label groupLabel = new Label(groupName);
+            groupLabel.getStyleClass().add("task-group-title");
 
-                VBox taskGroup = new VBox();
-                taskGroup.setMinWidth(250);
-                taskGroup.setPrefWidth(250);
-                taskGroup.setSpacing(10);
-                taskGroup.getStyleClass().add("task-group");
+            Label addTaskLabel = new Label("Add task");
+            addTaskLabel.setOnMouseClicked(event -> handleAddTask(groupId, taskGroup, tagId));
+            addTaskLabel.getStyleClass().add("add-task-label");
 
-                Label groupLabel = new Label(groupName);
-                groupLabel.getStyleClass().add("task-group-title");
+            VBox tasksVBox = new VBox();
+            tasksVBox.setSpacing(5);
+            tasksVBox.setId("tasksVBox" + groupId);
 
-                Label addTaskLabel = new Label("Add task");
-                addTaskLabel.setOnMouseClicked(event -> handleAddTask(groupId, taskGroup, tagId));
-                addTaskLabel.getStyleClass().add("add-task-label");
+            taskGroup.getChildren().addAll(groupLabel, addTaskLabel, tasksVBox);
+            projectBoardHBox.getChildren().add(taskGroup);
 
-                VBox tasksVBox = new VBox();
-                tasksVBox.setSpacing(5);
-                tasksVBox.setId("tasksVBox" + groupId);
-
-                taskGroup.getChildren().addAll(groupLabel, addTaskLabel, tasksVBox);
-                projectBoardHBox.getChildren().add(taskGroup);
-
-                // Загрузка задач для данной группы
-                loadTasksForGroup(currentProjectId, tagId, groupId, tasksVBox);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            // Загрузка задач для данной группы
+            loadTasksForGroup(currentProjectId, tagId, groupId, tasksVBox);
         }
-    }
+    } 
 
     private void loadTasksForGroup(int projId, int tagId, int groupId, VBox tasksVBox) {
-        String query = "SELECT DISTINCT t.task_name " +
-                "FROM tasklist t " +
-                "JOIN tag_connector tc ON t.task_id = tc.task_id " +
-                "JOIN taglist tl ON tc.tag_id = tl.tag_id " +
-                "JOIN grouplist g ON tl.tag_id = g.tag_id " +
-                "WHERE g.tag_id = ? AND t.proj_id = ? AND g.group_id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setInt(1, tagId);
-            statement.setInt(2, projId);
-            statement.setInt(3, groupId);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                String taskName = resultSet.getString("task_name");
-                addTaskToGroup(tasksVBox, taskName);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<String> tasks = Tags.getTasksForGroup(projId, tagId, groupId);
+        for (String taskName : tasks) {
+            List<String> taskTags = Tags.getTagsForTask(Task.getTaskId(taskName));
+            addTaskToGroup(tasksVBox, taskName, taskTags);
         }
     }
+        
 
     private void handleAddTask(int groupId, VBox taskGroup, int tagId) {
         currentTaskGroupVBox = taskGroup;
         setTagForCurrentGroup(tagId);
         loadAvailableTags(availableTagsComboBox);
         showRightPanel("task");
-    }
+    }    
 
     private void loadTags() {
-        String query = "SELECT tag_name FROM taglist";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                String tagName = resultSet.getString("tag_name");
-                availableTagsComboBox.getItems().add(tagName);
-                editAvailableTagsComboBox.getItems().add(tagName);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+        List<String> tags = Tags.getAllTags();
+        availableTagsComboBox.getItems().addAll(tags);
+        editAvailableTagsComboBox.getItems().addAll(tags);
+    }    
 
     private void loadAvailableTags(ComboBox<String> comboBox) {
         comboBox.getItems().clear();
-        String query = "SELECT tag_name FROM taglist";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                String tagName = resultSet.getString("tag_name");
-                if (!currentTaskTags.contains(tagName)) {
-                    comboBox.getItems().add(tagName);
-                }
+        List<String> tags = Tags.getAllTags();
+        for (String tagName : tags) {
+            if (!currentTaskTags.contains(tagName)) {
+                comboBox.getItems().add(tagName);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
     private void setTagForCurrentGroup(int tagId) {
-        String query = "SELECT tag_name FROM taglist WHERE tag_id = ?";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setInt(1, tagId);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                String tagName = resultSet.getString("tag_name");
-                taskTagsPane.getChildren().clear();
-                taskTagsPane.getChildren().add(new Label(tagName));
-                currentTaskTags = new HashSet<>();
-                currentTaskTags.add(tagName);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        String tagName = Tags.getTagNameById(tagId);
+        if (tagName != null) {
+            taskTagsPane.getChildren().clear();
+            taskTagsPane.getChildren().add(new Label(tagName));
+            currentTaskTags = new HashSet<>();
+            currentTaskTags.add(tagName);
         }
     }
+
 
     private Set<String> getTagsFromPane(FlowPane tagsPane) {
         Set<String> tags = new HashSet<>();
@@ -677,29 +464,31 @@ public class MainController {
     private void loadTaskTags(String taskName, FlowPane tagsPane, ComboBox<String> availableTagsComboBox) {
         tagsPane.getChildren().clear();
         currentTaskTags = new HashSet<>();
-        String query = "SELECT tag_name FROM taglist tl " +
-                "JOIN tag_connector tc ON tl.tag_id = tc.tag_id " +
-                "JOIN tasklist t ON tc.task_id = t.task_id " +
-                "WHERE t.task_name = ?";
-    
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-    
-            statement.setString(1, taskName);
-            ResultSet resultSet = statement.executeQuery();
-    
-            while (resultSet.next()) {
-                String tagName = resultSet.getString("tag_name");
+        int taskId = Task.getTaskId(taskName);
+        
+        if (taskId != -1) {
+            List<String> tags = Tags.getTagsForTask(taskId);
+            for (String tagName : tags) {
                 Label tagLabel = new Label(tagName);
-                tagLabel.setOnMouseClicked(this::handleTagDoubleClick); // Добавляем обработчик двойного нажатия
+                tagLabel.setOnMouseClicked(this::handleTagDoubleClick);
                 tagsPane.getChildren().add(tagLabel);
                 currentTaskTags.add(tagName);
             }
-    
-            loadAvailableTags(availableTagsComboBox);
-    
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-    }    
+    
+        loadAvailableTags(availableTagsComboBox);
+    }
+
+    private void setViewVisibility(VBox visibleView) {
+        homeViewVBox.setVisible(false);
+        homeViewVBox.setManaged(false);
+        projectViewVBox.setVisible(false);
+        projectViewVBox.setManaged(false);
+        createProjectViewVBox.setVisible(false);
+        createProjectViewVBox.setManaged(false);
+
+        visibleView.setVisible(true);
+        visibleView.setManaged(true);
+    }
+
 }
