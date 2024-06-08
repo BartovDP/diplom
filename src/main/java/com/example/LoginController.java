@@ -29,6 +29,7 @@ public class LoginController {
     private CheckBox rememberMeCheckBox;
 
     private static String username;
+    private static int userid;
     private String password;
     private boolean rememberMe;
 
@@ -46,6 +47,7 @@ public class LoginController {
         // Placeholder for actual login logic
         if (validateLogin(username, password)) {
             openMainInterface();
+            getUserId(username);
         } else {
             // Обработка неудачной попытки логина
             errorMessageLabel.setText("Invalid username or password. Please try again.");
@@ -83,6 +85,25 @@ public class LoginController {
         return false;
     }
 
+    private void getUserId(String username) {
+        String query = "SELECT user_id FROM userlist WHERE user_name = ?";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                userid = resultSet.getInt("user_id");
+                System.out.println("User ID: " + userid); // Выводим ID для проверки (можно удалить позже)
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void openMainInterface() {
         try {
             App.setRoot("/com/example/main.fxml");
@@ -93,6 +114,10 @@ public class LoginController {
 
     public static String getUsername() {
         return username;
+    }
+
+    public static int getUserId() {
+        return userid;
     }
 
     public String getPassword() {

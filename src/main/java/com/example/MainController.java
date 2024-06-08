@@ -8,10 +8,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -36,9 +32,6 @@ public class MainController {
 
     @FXML
     private VBox taskEditVBox;
-
-    @FXML
-    private TextField projectNameField;
 
     @FXML
     private TextArea projectDescriptionArea;
@@ -100,6 +93,17 @@ public class MainController {
     @FXML
     private VBox createProjectViewVBox;
 
+    @FXML
+    private TextField projectNameField;
+    @FXML
+    private TextField newProjectNameField;
+
+    @FXML
+    private TextArea newProjectDescriptionArea;
+
+    @FXML
+    private ComboBox<String> projectTemplateComboBox;
+
 
     private VBox currentEditTaskBox;
     private VBox currentTaskGroupVBox;
@@ -114,6 +118,7 @@ public class MainController {
     private void initialize() {
         responsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
         editResponsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
+        projectTemplateComboBox.setItems(FXCollections.observableArrayList("Template One", "Template Two"));
 
         username = LoginController.getUsername();
         loadProjectsForUser(username);
@@ -134,12 +139,26 @@ public class MainController {
     }
 
     @FXML
-    private void handleCreateProject() { //создание
-        String projectName = projectNameField.getText();
-        String projectDescription = projectDescriptionArea.getText();
-        System.out.println("Project Created: " + projectName + " - " + projectDescription);
-        // Add logic to create a new project
-        closeRightPanel();
+    private void handleCreateProject() {
+        String projectName = newProjectNameField.getText();
+        String projectDescription = newProjectDescriptionArea.getText();
+        String projectTemplate = projectTemplateComboBox.getValue();
+    
+        if (projectName != null && !projectName.isEmpty()) {
+            int projectId = Project.createProject(projectName, projectDescription, LoginController.getUserId());
+
+            if ("Template One".equals(projectTemplate)) {
+                Project.addTemplateOne(projectId);
+            } else if ("Template Two".equals(projectTemplate)) {
+                Project.addTemplateTwo(projectId);
+            }
+
+            loadProjectsForUser(username);
+            setViewVisibility(homeViewVBox);
+        } else {
+            // Вывести сообщение об ошибке, если имя проекта не указано
+            System.out.println("Project name is required.");
+        }
     }
 
     @FXML
@@ -229,6 +248,13 @@ public class MainController {
             ComboBox<String> tagComboBox = tagsPane == taskTagsPane ? availableTagsComboBox : editAvailableTagsComboBox;
             tagComboBox.getItems().add(tagLabel.getText());
         }
+    }
+
+    @FXML
+    private void handleDeleteProject() {
+        Project.deleteProject(currentProjectId);
+        loadProjectsForUser(username);
+        setViewVisibility(homeViewVBox);
     }
 
     @FXML
@@ -354,6 +380,12 @@ public class MainController {
         List<ProjectDetails> projects = Project.getProjectsForUser(username);
 
         projectsVBox.getChildren().clear();
+
+        Label createNewLabel = new Label("Create New");
+        createNewLabel.getStyleClass().add("project-label");
+        createNewLabel.setOnMouseClicked(event -> setViewVisibility(createProjectViewVBox));
+        projectsVBox.getChildren().add(createNewLabel);
+
         for (ProjectDetails project : projects) {
             int projectId = project.getProjectId();
             String projectName = project.getProjectName();
@@ -489,6 +521,12 @@ public class MainController {
 
         visibleView.setVisible(true);
         visibleView.setManaged(true);
+
+        if (visibleView != createProjectViewVBox) {
+            newProjectNameField.clear();
+            newProjectDescriptionArea.clear();
+            projectTemplateComboBox.setValue(null);
+        }
     }
 
 }

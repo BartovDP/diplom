@@ -43,6 +43,7 @@
         <!-- Project View -->
         <VBox fx:id="projectViewVBox" visible="false" managed="false" VBox.vgrow="ALWAYS">
             <Label text="Project View" styleClass="project-title" />
+            <Button text="Delete Project" onAction="#handleDeleteProject" />
             <TabPane VBox.vgrow="ALWAYS">
                 <Tab text="Board View">
                     <ScrollPane fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="board-scroll-pane">
@@ -67,9 +68,15 @@
         </VBox>
 
         <!-- Create Project View -->
-        <VBox fx:id="createProjectViewVBox" visible="false" managed="false" VBox.vgrow="ALWAYS">
-            <Label text="Create Project" styleClass="create-project-title" />
-            <!-- Content for Create Project view -->
+        <VBox fx:id="createProjectViewVBox" HBox.hgrow="ALWAYS" styleClass="center-panel" visible="false" managed="false">
+            <Label text="Create Project" styleClass="view-title" />
+            <Label text="Project Name" />
+            <TextField fx:id="newProjectNameField" />
+            <Label text="Project Description" />
+            <TextArea fx:id="newProjectDescriptionArea" />
+            <Label text="Project Template" />
+            <ComboBox fx:id="projectTemplateComboBox" promptText="Select Template" />
+            <Button text="Create Project" onAction="#handleCreateProject" />
         </VBox>
     </VBox>
 

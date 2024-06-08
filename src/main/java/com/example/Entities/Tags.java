@@ -187,4 +187,21 @@ public class Tags {
 
         return tasks;
     }
+
+    public static void createGroup(int projectId, int position, String groupName, int tagId) {
+        String query = "INSERT INTO grouplist (proj_id, position, group_name, tag_id) VALUES (?, ?, ?, ?)";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, projectId);
+            statement.setInt(2, position);
+            statement.setString(3, groupName);
+            statement.setInt(4, tagId);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
