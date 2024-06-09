@@ -6,6 +6,7 @@ module com.example {
     requires com.zaxxer.hikari;
     requires de.mkammerer.argon2;
     requires org.jfree.jfreechart;
+    requires org.postgresql.jdbc;
 
     opens com.example to javafx.fxml;
     exports com.example;

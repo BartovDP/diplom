@@ -1,5 +1,6 @@
 package com.example;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -8,10 +9,16 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.postgresql.PGConnection;
+import org.postgresql.PGNotification;
 
 import com.example.Entities.Group;
 import com.example.Entities.Project;
@@ -23,95 +30,78 @@ import com.example.Entities.TaskDetails;
 public class MainController {
     @FXML
     private VBox rightPanelVBox;
-
     @FXML
     private VBox projectCreateVBox;
-
     @FXML
     private VBox taskCreateVBox;
-
     @FXML
     private VBox taskEditVBox;
-
     @FXML
     private TextArea projectDescriptionArea;
-
     @FXML
     private TextField taskNameField;
-
     @FXML
     private TextArea taskDescriptionArea;
-
     @FXML
     private DatePicker beginningDatePicker;
-
     @FXML
     private DatePicker endingDatePicker;
-
     @FXML
     private ComboBox<String> responsibleComboBox;
-
     @FXML
     private ComboBox<String> availableTagsComboBox;
-
     @FXML
     private FlowPane taskTagsPane;
-
     @FXML
     private TextField editTaskNameField;
-
     @FXML
     private TextArea editTaskDescriptionArea;
-
     @FXML
     private DatePicker editBeginningDatePicker;
-
     @FXML
     private DatePicker editEndingDatePicker;
-
     @FXML
     private ComboBox<String> editResponsibleComboBox;
-
     @FXML
     private ComboBox<String> editAvailableTagsComboBox;
-
     @FXML
     private FlowPane editTaskTagsPane;
-
     @FXML
     private VBox projectsVBox;
-
     @FXML
     private HBox projectBoardHBox;
-
     @FXML
     private VBox homeViewVBox;
-
     @FXML
     private VBox projectViewVBox;
-
     @FXML
     private VBox createProjectViewVBox;
-
     @FXML
     private TextField projectNameField;
     @FXML
     private TextField newProjectNameField;
-
     @FXML
     private TextArea newProjectDescriptionArea;
-
     @FXML
     private ComboBox<String> projectTemplateComboBox;
+    @FXML
+    private Label projectNameLabel;
+    @FXML
+    private Label projectDescriptionLabel;
+    @FXML
+    private Label projectTemplateLabel;
+    @FXML
+    private VBox userAccessVBox;
 
 
     private VBox currentEditTaskBox;
     private VBox currentTaskGroupVBox;
-    private String currentTaskName;
-    private String currentProjectName;
-    private int currentProjectId; // ID выбранного проекта
-
-    private String username; // Имя пользователя, взятое из интерфейса входа
+    private static String currentTaskName;
+    private static String currentProjectName;
+    private static int currentProjectId; // ID выбранного проекта
+    private static Thread listeningThread;
+    private static Connection connection;
+    private static String username; // Имя пользователя, взятое из интерфейса входа
     private Set<String> currentTaskTags; // Теги текущей задачи
 
     @FXML
@@ -376,7 +366,7 @@ public class MainController {
         }
     }    
 
-    private void loadProjectsForUser(String username) {
+    public void loadProjectsForUser(String username) {
         List<ProjectDetails> projects = Project.getProjectsForUser(username);
 
         projectsVBox.getChildren().clear();
@@ -402,13 +392,16 @@ public class MainController {
     private void handleProjectClick(int projectId, String projectName) {
         currentProjectId = projectId;
         currentProjectName = projectName;
-        projectBoardHBox.getChildren().clear();
         loadTaskGroupsForProject(projectName);
+        loadProjectOverview(projectId);
         setViewVisibility(projectViewVBox);
+        stopListening();
+        startListening(projectId);
     }
 
     private void loadTaskGroupsForProject(String projectName) {
         List<Group> groups = Tags.getGroupsForProject(projectName);
+        projectBoardHBox.getChildren().clear();
 
         for (Group group : groups) {
             int groupId = group.getGroupId();
@@ -445,6 +438,22 @@ public class MainController {
         for (String taskName : tasks) {
             List<String> taskTags = Tags.getTagsForTask(Task.getTaskId(taskName));
             addTaskToGroup(tasksVBox, taskName, taskTags);
+        }
+    }
+
+    private void loadProjectOverview(int projectId) {
+        ProjectDetails projectDetails = Project.getProjectDetails(projectId);
+    
+        if (projectDetails != null) {
+            projectNameLabel.setText(projectDetails.getProjectName());
+            projectDescriptionLabel.setText(projectDetails.getProjectDescription());
+            projectTemplateLabel.setText(""); // Пока не заполняем
+    
+            List<String> users = Project.getUsersWithAccess(projectId);
+            userAccessVBox.getChildren().clear();
+            for (String user : users) {
+                userAccessVBox.getChildren().add(new Label(user));
+            }
         }
     }
         
@@ -529,4 +538,67 @@ public class MainController {
         }
     }
 
+
+    public void startListening(int proj_id) {
+        try {
+            connection = DatabaseManager.getConnection();
+            PGConnection pgConnection = connection.unwrap(PGConnection.class);
+            String channelName = "project_channel_" + proj_id;
+
+            // Создание подписки на канал
+            Statement stmt = connection.createStatement();
+            stmt.execute("LISTEN " + channelName);
+            stmt.close();
+
+            // Запуск потока для обработки уведомлений
+            listeningThread = new Thread(() -> {
+                try {
+                    while (!Thread.currentThread().isInterrupted()) {
+                        PGNotification[] notifications = pgConnection.getNotifications();
+                        System.out.println("Receiving notifications for " + channelName);
+                        if (notifications != null) {
+                            for (PGNotification notification : notifications) {
+                                if (notification.getName().equals(channelName)) {
+                                    String payload = notification.getParameter();
+                                    System.out.println("Received notification on " + channelName + ": " + payload);
+                                    
+                                    Platform.runLater(() -> {
+                                        loadProjectsForUser(username);
+                                        loadTaskGroupsForProject(currentProjectName);
+                                        loadProjectOverview(currentProjectId);
+                                    });
+                                }
+                            }
+                        }
+                        Thread.sleep(1000);
+                    }
+                } catch (SQLException | InterruptedException e) {
+                    if (e instanceof InterruptedException) {
+                        System.out.println("Listening thread interrupted");
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            listeningThread.start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void stopListening() {
+        if (listeningThread != null && listeningThread.isAlive()) {
+            listeningThread.interrupt();
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    Statement stmt = connection.createStatement();
+                    stmt.execute("UNLISTEN *");
+                    stmt.close();
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

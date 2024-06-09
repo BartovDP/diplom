@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     private static Stage primaryStage;
+    //private static MainController CurrrentController;
+
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -26,7 +28,8 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        DatabaseManager.close();
+       // DatabaseManager.close();
+       MainController.stopListening();
     }
 
     public static void main(String[] args) {
@@ -36,6 +39,7 @@ public class App extends Application {
     public static void setRoot(String fxml) throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource(fxml));
         Parent root = loader.load();
+        //CurrrentController = loader.getController();
         primaryStage.getScene().setRoot(root);
     }
 }

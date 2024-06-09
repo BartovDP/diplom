@@ -43,7 +43,6 @@
         <!-- Project View -->
         <VBox fx:id="projectViewVBox" visible="false" managed="false" VBox.vgrow="ALWAYS">
             <Label text="Project View" styleClass="project-title" />
-            <Button text="Delete Project" onAction="#handleDeleteProject" />
             <TabPane VBox.vgrow="ALWAYS">
                 <Tab text="Board View">
                     <ScrollPane fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="board-scroll-pane">
@@ -62,6 +61,20 @@
                 <Tab text="List View">
                     <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
                         <!-- List View content -->
+                    </VBox>
+                </Tab>
+                <Tab text="Overview">
+                    <VBox fx:id="overviewVBox">
+                        <Label text="Project Overview" styleClass="view-title" />
+                        <Label text="Name:" />
+                        <Label fx:id="projectNameLabel" />
+                        <Label text="Description:" />
+                        <Label fx:id="projectDescriptionLabel" />
+                        <Label text="Template:" />
+                        <Label fx:id="projectTemplateLabel" />
+                        <Label text="User Access:" />
+                        <VBox fx:id="userAccessVBox" spacing="5" />
+                        <Button text="Delete Project" onAction="#handleDeleteProject" />
                     </VBox>
                 </Tab>
             </TabPane>

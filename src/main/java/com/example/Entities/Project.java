@@ -92,6 +92,50 @@ public class Project {
         }
     }
 
+    public static ProjectDetails getProjectDetails(int projectId) {
+        String query = "SELECT proj_name, proj_desc FROM projects WHERE proj_id = ?";
+        ProjectDetails projectDetails = null;
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, projectId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String projectName = resultSet.getString("proj_name");
+                String projectDescription = resultSet.getString("proj_desc");
+                projectDetails = new ProjectDetails(projectId, projectName, projectDescription);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return projectDetails;
+    }
+
+    public static List<String> getUsersWithAccess(int projectId) {
+        String query = "SELECT userlist.user_name FROM userlist " +
+                "JOIN pu_connector ON userlist.user_id = pu_connector.user_id " +
+                "WHERE pu_connector.proj_id = ?";
+        List<String> users = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, projectId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                users.add(resultSet.getString("user_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return users;
+    }
+
     public static void addTemplateOne(int projectId) {
         Tags.createGroup(projectId, 1,  "Group 1", 1);
         Tags.createGroup(projectId, 2, "Group 2", 2);
