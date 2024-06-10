@@ -28,8 +28,8 @@ public class App extends Application {
 
     @Override
     public void stop() {
-       // DatabaseManager.close();
-       MainController.stopListening();
+       //DatabaseManager.close();
+        MainController.stopListening();
     }
 
     public static void main(String[] args) {
