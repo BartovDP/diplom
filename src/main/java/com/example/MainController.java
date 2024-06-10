@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -94,6 +96,8 @@ public class MainController {
     private VBox userAccessVBox;
     @FXML
     private TextField projectKeyField;
+    @FXML
+    private Label projectKeyLabel;
 
 
     private VBox currentEditTaskBox;
@@ -114,6 +118,18 @@ public class MainController {
         loadProjectsForUser(username);
 
         loadTags();
+    }
+
+    @FXML
+    private void handleCopyProjectKey(MouseEvent event) {
+        String projectKey = projectKeyLabel.getText();
+        if (projectKey != null && !projectKey.isEmpty()) {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(projectKey);
+            clipboard.setContent(content);
+            System.out.println("Project key copied to clipboard: " + projectKey);
+        }
     }
 
     @FXML
@@ -483,7 +499,8 @@ public class MainController {
         if (projectDetails != null) {
             projectNameLabel.setText(projectDetails.getProjectName());
             projectDescriptionLabel.setText(projectDetails.getProjectDescription());
-            projectTemplateLabel.setText(projectDetails.getProjectTemplate()); // Пока не заполняем
+            projectTemplateLabel.setText(projectDetails.getProjectTemplate());
+            projectKeyLabel.setText(projectDetails.getShareKey());
     
             List<String> users = Project.getUsersWithAccess(projectId);
             userAccessVBox.getChildren().clear();

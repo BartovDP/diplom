@@ -77,6 +77,8 @@
                         <Label fx:id="projectTemplateLabel" />
                         <Label text="User Access:" />
                         <VBox fx:id="userAccessVBox" spacing="5" />
+                        <Label text="Invite users with project key:" />
+                        <Label fx:id="projectKeyLabel" onMouseClicked="#handleCopyProjectKey" styleClass="clickable-label"/>
                         <Button text="Delete Project" onAction="#handleDeleteProject" />
                     </VBox>
                 </Tab>
