@@ -25,6 +25,7 @@
         <children>
             <Label text="User Profile" />
             <Label text="My Tasks" />
+            <Label text="Home" onMouseClicked="#handleHomeClick" />
             <TitledPane text="Projects" expanded="false" styleClass="titled-pane">
                 <content>
                     <VBox fx:id="projectsVBox" spacing="5" />
@@ -37,7 +38,9 @@
         <!-- Home View -->
         <VBox fx:id="homeViewVBox" visible="true" managed="true" VBox.vgrow="ALWAYS">
             <Label text="Home" styleClass="home-title" />
-            <!-- Content for Home view -->
+            <Label text="Join existing project" styleClass="sub-title" />
+            <TextField fx:id="projectKeyField" promptText="Enter project key" />
+            <Button text="Join" onAction="#handleJoinProject" />
         </VBox>
 
         <!-- Project View -->

@@ -92,12 +92,14 @@ public class MainController {
     private Label projectTemplateLabel;
     @FXML
     private VBox userAccessVBox;
+    @FXML
+    private TextField projectKeyField;
 
 
     private VBox currentEditTaskBox;
-    private VBox currentTaskGroupVBox;
+    //private VBox currentTaskGroupVBox;
     private static String currentTaskName;
-    private static String currentProjectName;
+    //private static String currentProjectName;
     private static int currentProjectId; // ID выбранного проекта
     private static Thread listeningThread;
     private static Connection connection;
@@ -106,8 +108,6 @@ public class MainController {
 
     @FXML
     private void initialize() {
-        responsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
-        editResponsibleComboBox.setItems(FXCollections.observableArrayList("User 1", "User 2", "User 3"));
         projectTemplateComboBox.setItems(FXCollections.observableArrayList("Template One", "Template Two"));
 
         username = LoginController.getUsername();
@@ -135,7 +135,7 @@ public class MainController {
         String projectTemplate = projectTemplateComboBox.getValue();
     
         if (projectName != null && !projectName.isEmpty()) {
-            int projectId = Project.createProject(projectName, projectDescription, LoginController.getUserId());
+            int projectId = Project.createProject(projectName, projectDescription, LoginController.getUserId(), projectTemplate);
 
             if ("Template One".equals(projectTemplate)) {
                 Project.addTemplateOne(projectId);
@@ -161,6 +161,10 @@ public class MainController {
         handleSaveTask(true);
     }
 
+    @FXML
+    private void handleHomeClick() {
+        setViewVisibility(homeViewVBox);
+    }
 
     @FXML
     private void handleSaveTask(boolean isEditMode) {
@@ -184,26 +188,52 @@ public class MainController {
             tagsPane = taskTagsPane;
         }
 
+        int userId = LoginController.getUserId(responsible);
+
         if (isEditMode) {
             Task.updateTask(currentTaskName, taskName, taskDescription, beginningDate, endingDate);
             updateTagsForTask(taskName, tagsPane);
+            Task.updateResponsibleUser(userId, userId);
         } else {
             int taskId = Task.saveTask(currentProjectId, taskName, taskDescription, beginningDate, endingDate);
             saveTagsToTask(tagsPane, taskId);
+            Task.saveResponsibleUser(taskId, userId);
         }
+
 
         // Reload task groups for the project to reflect changes in the UI
         projectBoardHBox.getChildren().clear();
-        loadTaskGroupsForProject(currentProjectName);
+        loadTaskGroupsForProject(currentProjectId);
 
         closeRightPanel();
+    }
+
+    @FXML
+    private void handleJoinProject() {
+        String projectKey = projectKeyField.getText();
+        if (projectKey != null && !projectKey.isEmpty()) {
+            int projectId = Project.getProjectIdByKey(projectKey);
+            int userId = LoginController.getUserId();
+            if (projectId != -1 && userId != -1) {
+                Project.linkProjectToUser(projectId, userId);
+                loadProjectsForUser(username);
+                projectKeyField.clear();
+                setViewVisibility(homeViewVBox);
+            } else {
+                // Вывести сообщение об ошибке, если проект не найден или id пользователя не определен
+                System.out.println("Project not found or user ID is not defined.");
+            }
+        } else {
+            // Вывести сообщение об ошибке, если ключ проекта не введен
+            System.out.println("Project key is required.");
+        }
     }
 
     @FXML
     private void handleDeleteTask() {
         Task.deleteTask(currentTaskName);
         projectBoardHBox.getChildren().clear();
-        loadTaskGroupsForProject(currentProjectName);
+        loadTaskGroupsForProject(currentProjectId);
         closeRightPanel();
     }
 
@@ -379,7 +409,6 @@ public class MainController {
         for (ProjectDetails project : projects) {
             int projectId = project.getProjectId();
             String projectName = project.getProjectName();
-            String projectDescription = project.getProjectDescription();
 
             Label projectLabel = new Label(projectName);
             projectLabel.getStyleClass().add("project-label");
@@ -389,18 +418,25 @@ public class MainController {
         }
     }
 
+    private void loadResponsibleUsers(int projectId) {
+        List<String> users = Project.getUsersWithAccess(projectId);
+        responsibleComboBox.setItems(FXCollections.observableArrayList(users));
+        editResponsibleComboBox.setItems(FXCollections.observableArrayList(users));
+    }
+
     private void handleProjectClick(int projectId, String projectName) {
         currentProjectId = projectId;
-        currentProjectName = projectName;
-        loadTaskGroupsForProject(projectName);
+        //currentProjectName = projectName;
+        loadResponsibleUsers(projectId);
+        loadTaskGroupsForProject(projectId);
         loadProjectOverview(projectId);
         setViewVisibility(projectViewVBox);
         stopListening();
         startListening(projectId);
     }
 
-    private void loadTaskGroupsForProject(String projectName) {
-        List<Group> groups = Tags.getGroupsForProject(projectName);
+    private void loadTaskGroupsForProject(int projectId) {
+        List<Group> groups = Tags.getGroupsForProject(projectId);
         projectBoardHBox.getChildren().clear();
 
         for (Group group : groups) {
@@ -447,7 +483,7 @@ public class MainController {
         if (projectDetails != null) {
             projectNameLabel.setText(projectDetails.getProjectName());
             projectDescriptionLabel.setText(projectDetails.getProjectDescription());
-            projectTemplateLabel.setText(""); // Пока не заполняем
+            projectTemplateLabel.setText(projectDetails.getProjectTemplate()); // Пока не заполняем
     
             List<String> users = Project.getUsersWithAccess(projectId);
             userAccessVBox.getChildren().clear();
@@ -459,7 +495,7 @@ public class MainController {
         
 
     private void handleAddTask(int groupId, VBox taskGroup, int tagId) {
-        currentTaskGroupVBox = taskGroup;
+        //currentTaskGroupVBox = taskGroup;
         setTagForCurrentGroup(tagId);
         loadAvailableTags(availableTagsComboBox);
         showRightPanel("task");
@@ -536,6 +572,7 @@ public class MainController {
             newProjectDescriptionArea.clear();
             projectTemplateComboBox.setValue(null);
         }
+        closeRightPanel();
     }
 
 
@@ -564,13 +601,13 @@ public class MainController {
                                     
                                     Platform.runLater(() -> {
                                         loadProjectsForUser(username);
-                                        loadTaskGroupsForProject(currentProjectName);
+                                        loadTaskGroupsForProject(currentProjectId);
                                         loadProjectOverview(currentProjectId);
                                     });
                                 }
                             }
                         }
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                     }
                 } catch (SQLException | InterruptedException e) {
                     if (e instanceof InterruptedException) {

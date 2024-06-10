@@ -29,7 +29,7 @@ public class LoginController {
     private CheckBox rememberMeCheckBox;
 
     private static String username;
-    private static int userid;
+    //private static int userid;
     private String password;
     private boolean rememberMe;
 
@@ -85,8 +85,9 @@ public class LoginController {
         return false;
     }
 
-    private void getUserId(String username) {
+    public static int getUserId(String username) {
         String query = "SELECT user_id FROM userlist WHERE user_name = ?";
+        int userId = -1;
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -95,13 +96,14 @@ public class LoginController {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                userid = resultSet.getInt("user_id");
-                System.out.println("User ID: " + userid); // Выводим ID для проверки (можно удалить позже)
+                userId = resultSet.getInt("user_id");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return userId;
     }
 
     private void openMainInterface() {
@@ -117,7 +119,7 @@ public class LoginController {
     }
 
     public static int getUserId() {
-        return userid;
+        return getUserId(username);
     }
 
     public String getPassword() {

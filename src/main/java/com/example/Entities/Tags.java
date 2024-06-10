@@ -131,18 +131,18 @@ public class Tags {
     }
 
     // Methods for group operations
-    public static List<Group> getGroupsForProject(String projectName) {
+    public static List<Group> getGroupsForProject(int projectId) {
         String query = "SELECT g.group_id, g.position, g.group_name, g.tag_id " +
                 "FROM grouplist g " +
                 "JOIN projects p ON g.proj_id = p.proj_id " +
-                "WHERE p.proj_name = ? " +
+                "WHERE p.proj_id = ? " +
                 "ORDER BY g.position";
         List<Group> groups = new ArrayList<>();
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, projectName);
+            statement.setInt(1, projectId);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {

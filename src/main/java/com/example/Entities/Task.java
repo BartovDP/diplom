@@ -115,4 +115,60 @@ public class Task {
 
         return taskId;
     }
+
+    public static void saveResponsibleUser(int taskId, int userId) {
+        String query = "INSERT INTO task_connector (task_id, user_id) " +
+                       "VALUES (?, ?)";
+    
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+    
+            statement.setInt(1, taskId);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateResponsibleUser(int taskId, int userId) {
+        String query = "UPDATE task_connector SET user_id = ? WHERE task_id = ?";
+    
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+    
+            statement.setInt(1, userId);
+            statement.setInt(2, taskId);
+            statement.executeUpdate();
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getResponsibleUser(String taskName) {
+        String query = "SELECT u.user_name " +
+                       "FROM userlist u " +
+                       "JOIN task_connector tc ON u.user_id = tc.user_id " +
+                       "JOIN tasklist t ON tc.task_id = t.task_id " +
+                       "WHERE t.task_name = ?";
+        String responsibleUser = null;
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, taskName);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                responsibleUser = resultSet.getString("user_name");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return responsibleUser;
+    }
 }
