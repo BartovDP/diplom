@@ -37,11 +37,30 @@
 
     <VBox fx:id="centerPanelVBox" HBox.hgrow="ALWAYS" styleClass="center-panel">
         <!-- Home View -->
-        <VBox fx:id="homeViewVBox" visible="true" managed="true" VBox.vgrow="ALWAYS">
+        <VBox fx:id="homeViewVBox" visible="true" managed="true" VBox.vgrow="ALWAYS" spacing="10">
             <Label text="Home" styleClass="home-title" />
-            <Label text="Join existing project" styleClass="sub-title" />
-            <TextField fx:id="projectKeyField" promptText="Enter project key" />
-            <Button text="Join" onAction="#handleJoinProject" />
+            
+            <HBox spacing="20">
+                <VBox spacing="10">
+                    <Label text="Add project" styleClass="sub-title" />
+                    <Label text="• create new" onMouseClicked="#handleCreateProjectClick" styleClass="clickable-label" />
+                    <HBox spacing="5">
+                        <Label text="• join" />
+                        <TextField fx:id="projectKeyField" promptText="Enter project key" />
+                        <Button text="Join" onAction="#handleJoinProject" />
+                    </HBox>
+                </VBox>
+                
+                <VBox spacing="10">
+                    <Label text="My tasks" styleClass="sub-title" />
+                    <VBox fx:id="myTasksVBox" spacing="5" />
+                </VBox>
+                
+                <VBox spacing="10">
+                    <Label text="My projects" styleClass="sub-title" />
+                    <VBox fx:id="myProjectsVBox" spacing="5" />
+                </VBox>
+            </HBox>
         </VBox>
 
         <!-- Project View -->

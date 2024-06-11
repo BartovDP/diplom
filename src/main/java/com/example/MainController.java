@@ -26,9 +26,6 @@ import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import com.calendarfx.view.CalendarView;
-import com.calendarfx.view.DetailedWeekView;
-import com.calendarfx.view.WeekView;
-import com.calendarfx.view.page.WeekPage;
 import com.example.Entities.Group;
 import com.example.Entities.Project;
 import com.example.Entities.ProjectDetails;
@@ -107,6 +104,10 @@ public class MainController {
     private Label projectKeyLabel;
     @FXML
     private CalendarView calendarView;
+    @FXML
+    private VBox myTasksVBox;
+    @FXML
+    private VBox myProjectsVBox;
 
     private Calendar taskCalendar;
     private VBox currentEditTaskBox;
@@ -440,6 +441,8 @@ public class MainController {
         List<ProjectDetails> projects = Project.getProjectsForUser(username);
 
         projectsVBox.getChildren().clear();
+        myProjectsVBox.getChildren().clear();
+        
 
         Label createNewLabel = new Label("Create New");
         createNewLabel.getStyleClass().add("project-label");
@@ -453,8 +456,12 @@ public class MainController {
             Label projectLabel = new Label(projectName);
             projectLabel.getStyleClass().add("project-label");
             projectLabel.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
-
             projectsVBox.getChildren().add(projectLabel);
+
+            Label projectLabel2 = new Label(projectName);
+            projectLabel2.getStyleClass().add("project-label");
+            projectLabel2.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
+            myProjectsVBox.getChildren().add(projectLabel2);
         }
     }
 
@@ -492,6 +499,15 @@ public class MainController {
         }
     }
 
+    private void loadTasksForUser() {
+        myTasksVBox.getChildren().clear();
+        myTasksVBox.getChildren().addAll(new Label("Task 1"), new Label("Task 2"), new Label("Task 3"));
+    }
+
+    @FXML
+    private void handleCreateProjectClick(MouseEvent event) {
+        setViewVisibility(createProjectViewVBox);
+    }
 
     private void loadTaskGroupsForProject(int projectId) {
         List<Group> groups = Tags.getGroupsForProject(projectId);
