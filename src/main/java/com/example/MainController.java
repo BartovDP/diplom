@@ -22,6 +22,13 @@ import java.util.Set;
 import org.postgresql.PGConnection;
 import org.postgresql.PGNotification;
 
+import com.calendarfx.model.Calendar;
+import com.calendarfx.model.CalendarSource;
+import com.calendarfx.model.Entry;
+import com.calendarfx.view.CalendarView;
+import com.calendarfx.view.DetailedWeekView;
+import com.calendarfx.view.WeekView;
+import com.calendarfx.view.page.WeekPage;
 import com.example.Entities.Group;
 import com.example.Entities.Project;
 import com.example.Entities.ProjectDetails;
@@ -98,8 +105,10 @@ public class MainController {
     private TextField projectKeyField;
     @FXML
     private Label projectKeyLabel;
+    @FXML
+    private CalendarView calendarView;
 
-
+    private Calendar taskCalendar;
     private VBox currentEditTaskBox;
     //private VBox currentTaskGroupVBox;
     private static String currentTaskName;
@@ -118,6 +127,21 @@ public class MainController {
         loadProjectsForUser(username);
 
         loadTags();
+
+        taskCalendar = new Calendar("Tasks");
+        CalendarSource calendarSource = new CalendarSource("My Calendars");
+        calendarSource.getCalendars().add(taskCalendar);
+
+        calendarView.getCalendarSources().add(calendarSource);
+        calendarView.showMonthPage();
+
+        calendarView.setShowAddCalendarButton(false);
+        calendarView.setShowPrintButton(false);
+        calendarView.setShowSearchField(false);
+        calendarView.setShowPageSwitcher(false);
+        calendarView.setShowSourceTrayButton(false);
+        calendarView.setShowAddCalendarButton(false);
+
     }
 
     @FXML
@@ -449,7 +473,25 @@ public class MainController {
         setViewVisibility(projectViewVBox);
         stopListening();
         startListening(projectId);
+        loadTasksForCalendar(projectId);
     }
+
+    
+    private void loadTasksForCalendar(int projectId) {
+        List<TaskDetails> tasks = Task.getTasksForProject(projectId);
+        loadTasksIntoCalendar(tasks);
+    }
+
+    public void loadTasksIntoCalendar(List<TaskDetails> tasks) {
+        taskCalendar.clear();
+        for (TaskDetails task : tasks) {
+            Entry<String> entry = new Entry<>(task.getTaskName());
+            entry.setInterval(task.getBeginningDate(), task.getEndingDate());
+            entry.setFullDay(true);
+            taskCalendar.addEntry(entry);
+        }
+    }
+
 
     private void loadTaskGroupsForProject(int projectId) {
         List<Group> groups = Tags.getGroupsForProject(projectId);

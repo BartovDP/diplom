@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import com.calendarfx.view.CalendarView?>
 
 <HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@styles.css">
     <!-- Left Panel (Menu) -->
@@ -63,7 +64,8 @@
                 </Tab>
                 <Tab text="List View">
                     <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
-                        <!-- List View content -->
+                        <!-- CalendarFX CalendarView -->
+                        <CalendarView fx:id="calendarView" VBox.vgrow="ALWAYS"/>
                     </VBox>
                 </Tab>
                 <Tab text="Overview">

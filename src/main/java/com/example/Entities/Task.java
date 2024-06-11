@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.DatabaseManager;
 
@@ -170,5 +172,30 @@ public class Task {
         }
 
         return responsibleUser;
+    }
+
+    public static List<TaskDetails> getTasksForProject(int projectId) {
+        String query = "SELECT task_name, task_desc, task_beg, task_end FROM tasklist WHERE proj_id = ?";
+        List<TaskDetails> tasks = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, projectId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String taskName = resultSet.getString("task_name");
+                String taskDescription = resultSet.getString("task_desc");
+                LocalDate beginningDate = resultSet.getDate("task_beg").toLocalDate();
+                LocalDate endingDate = resultSet.getDate("task_end").toLocalDate();
+                tasks.add(new TaskDetails(taskName, taskDescription, beginningDate, endingDate));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tasks;
     }
 }
