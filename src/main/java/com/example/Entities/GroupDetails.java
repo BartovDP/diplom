@@ -1,12 +1,12 @@
 package com.example.Entities;
 
-public class Group {
+public class GroupDetails {
     private int groupId;
     private int position;
     private String groupName;
     private int tagId;
 
-    public Group(int groupId, int position, String groupName, int tagId) {
+    public GroupDetails(int groupId, int position, String groupName, int tagId) {
         this.groupId = groupId;
         this.position = position;
         this.groupName = groupName;

@@ -26,7 +26,8 @@ import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import com.calendarfx.view.CalendarView;
-import com.example.Entities.Group;
+import com.example.Entities.GroupDetails;
+import com.example.Entities.Groups;
 import com.example.Entities.Project;
 import com.example.Entities.ProjectDetails;
 import com.example.Entities.Tags;
@@ -108,6 +109,8 @@ public class MainController {
     private VBox myTasksVBox;
     @FXML
     private VBox myProjectsVBox;
+    @FXML
+    private VBox centerPanelVBox;
 
     private Calendar taskCalendar;
     private VBox currentEditTaskBox;
@@ -126,6 +129,7 @@ public class MainController {
 
         username = LoginController.getUsername();
         loadProjectsForUser(username);
+        loadTasksForUser();
 
         loadTags();
 
@@ -381,8 +385,11 @@ public class MainController {
         tagsPane.getChildren().clear(); // Очистить существующие теги
         for (String tag : tags) {
             Label tagLabel = new Label(tag);
-            tagLabel.getStyleClass().add("tag-label");
-            tagsPane.getChildren().add(tagLabel);
+            tagLabel.getStyleClass().add("tags-pane-label");
+            VBox tagPane = new VBox();
+            tagPane.getStyleClass().add("tags-pane-label-back");
+            tagPane.getChildren().add(tagLabel);
+            tagsPane.getChildren().add(tagPane);
         }
     }    
 
@@ -444,7 +451,7 @@ public class MainController {
         myProjectsVBox.getChildren().clear();
         
 
-        Label createNewLabel = new Label("Create New");
+        Label createNewLabel = new Label("+ Create New");
         createNewLabel.getStyleClass().add("project-label");
         createNewLabel.setOnMouseClicked(event -> setViewVisibility(createProjectViewVBox));
         projectsVBox.getChildren().add(createNewLabel);
@@ -459,7 +466,7 @@ public class MainController {
             projectsVBox.getChildren().add(projectLabel);
 
             Label projectLabel2 = new Label(projectName);
-            projectLabel2.getStyleClass().add("project-label");
+            projectLabel2.getStyleClass().add("home-label");
             projectLabel2.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
             myProjectsVBox.getChildren().add(projectLabel2);
         }
@@ -500,9 +507,18 @@ public class MainController {
     }
 
     private void loadTasksForUser() {
+        int userId = LoginController.getUserId();
+        List<TaskDetails> userTasks = Task.getTasksForUser(userId);
+    
         myTasksVBox.getChildren().clear();
-        myTasksVBox.getChildren().addAll(new Label("Task 1"), new Label("Task 2"), new Label("Task 3"));
+    
+        for (TaskDetails task : userTasks) {
+            Label taskLabel = new Label(task.getTaskName());
+            taskLabel.getStyleClass().add("home-label");
+            myTasksVBox.getChildren().add(taskLabel);
+        }
     }
+    
 
     @FXML
     private void handleCreateProjectClick(MouseEvent event) {
@@ -510,32 +526,32 @@ public class MainController {
     }
 
     private void loadTaskGroupsForProject(int projectId) {
-        List<Group> groups = Tags.getGroupsForProject(projectId);
+        List<GroupDetails> groups = Groups.getGroupsForProject(projectId);
         projectBoardHBox.getChildren().clear();
 
-        for (Group group : groups) {
+        for (GroupDetails group : groups) {
             int groupId = group.getGroupId();
             String groupName = group.getGroupName();
             int tagId = group.getTagId();
 
             VBox taskGroup = new VBox();
-            taskGroup.setMinWidth(250);
-            taskGroup.setPrefWidth(250);
-            taskGroup.setSpacing(10);
             taskGroup.getStyleClass().add("task-group");
 
             Label groupLabel = new Label(groupName);
+            VBox labelBox = new VBox();
             groupLabel.getStyleClass().add("task-group-title");
+            labelBox.getChildren().add(groupLabel);
 
             Label addTaskLabel = new Label("Add task");
             addTaskLabel.setOnMouseClicked(event -> handleAddTask(groupId, taskGroup, tagId));
             addTaskLabel.getStyleClass().add("add-task-label");
 
             VBox tasksVBox = new VBox();
-            tasksVBox.setSpacing(5);
+            tasksVBox.getStyleClass().add("task-group-tasklist");
             tasksVBox.setId("tasksVBox" + groupId);
+            tasksVBox.getChildren().add(addTaskLabel);
 
-            taskGroup.getChildren().addAll(groupLabel, addTaskLabel, tasksVBox);
+            taskGroup.getChildren().addAll(labelBox, tasksVBox);
             projectBoardHBox.getChildren().add(taskGroup);
 
             // Загрузка задач для данной группы
@@ -544,7 +560,7 @@ public class MainController {
     } 
 
     private void loadTasksForGroup(int projId, int tagId, int groupId, VBox tasksVBox) {
-        List<String> tasks = Tags.getTasksForGroup(projId, tagId, groupId);
+        List<String> tasks = Groups.getTasksForGroup(projId, tagId, groupId);
         for (String taskName : tasks) {
             List<String> taskTags = Tags.getTagsForTask(Task.getTaskId(taskName));
             addTaskToGroup(tasksVBox, taskName, taskTags);
@@ -646,6 +662,14 @@ public class MainController {
             newProjectNameField.clear();
             newProjectDescriptionArea.clear();
             projectTemplateComboBox.setValue(null);
+        }
+        if (visibleView != projectViewVBox) {
+            centerPanelVBox.getStyleClass().clear();
+            centerPanelVBox.getStyleClass().add("center-padding");
+        }
+        else {
+            centerPanelVBox.getStyleClass().clear();
+            centerPanelVBox.getStyleClass().add("center-panel");
         }
         closeRightPanel();
     }

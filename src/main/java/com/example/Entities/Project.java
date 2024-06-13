@@ -145,12 +145,12 @@ public class Project {
     }
 
     public static void addTemplateOne(int projectId) {
-        Tags.createGroup(projectId, 1,  "Group 1", 1);
-        Tags.createGroup(projectId, 2, "Group 2", 2);
+        Groups.createGroup(projectId, 1,  "Group 1", 1);
+        Groups.createGroup(projectId, 2, "Group 2", 2);
     }
 
     public static void addTemplateTwo(int projectId) {
-        Tags.createGroup(projectId, 1, "Group 3", 3);
+        Groups.createGroup(projectId, 1, "Group 3", 3);
     }
 
     public static String getShareKey(int projectId) {

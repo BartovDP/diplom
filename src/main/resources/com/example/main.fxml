@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
 <?import com.calendarfx.view.CalendarView?>
 
 <HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@styles.css">
@@ -35,39 +36,41 @@
         </children>
     </VBox>
 
-    <VBox fx:id="centerPanelVBox" HBox.hgrow="ALWAYS" styleClass="center-panel">
+    <VBox fx:id="centerPanelVBox" HBox.hgrow="ALWAYS" styleClass="center-padding">
         <!-- Home View -->
-        <VBox fx:id="homeViewVBox" visible="true" managed="true" VBox.vgrow="ALWAYS" spacing="10">
+        <VBox fx:id="homeViewVBox" visible="true" managed="true" VBox.vgrow="ALWAYS" styleClass="home-view" spacing="20">
             <Label text="Home" styleClass="home-title" />
-            
-            <HBox spacing="20">
-                <VBox spacing="10">
-                    <Label text="Add project" styleClass="sub-title" />
-                    <Label text="• create new" onMouseClicked="#handleCreateProjectClick" styleClass="clickable-label" />
-                    <HBox spacing="5">
-                        <Label text="• join" />
-                        <TextField fx:id="projectKeyField" promptText="Enter project key" />
-                        <Button text="Join" onAction="#handleJoinProject" />
+            <VBox spacing="20" alignment="CENTER">
+                <VBox spacing="10" styleClass="section" prefWidth="600">
+                    <Label text="Add project" styleClass="section-title" />
+                    <HBox spacing="25">
+                        <Label text="• Create new project" onMouseClicked="#handleCreateProjectClick" styleClass="home-label" />
+                        <HBox spacing="5">
+                            <Label text="• Join existing:" styleClass="home-label" />
+                            <TextField fx:id="projectKeyField" promptText="Enter project key" />
+                            <Button text="Join" onAction="#handleJoinProject" />
+                        </HBox>
                     </HBox>
                 </VBox>
-                
-                <VBox spacing="10">
-                    <Label text="My tasks" styleClass="sub-title" />
-                    <VBox fx:id="myTasksVBox" spacing="5" />
-                </VBox>
-                
-                <VBox spacing="10">
-                    <Label text="My projects" styleClass="sub-title" />
-                    <VBox fx:id="myProjectsVBox" spacing="5" />
-                </VBox>
-            </HBox>
+                <HBox spacing="20" alignment="CENTER" VBox.vgrow="ALWAYS">
+                    <VBox spacing="10" styleClass="section" prefWidth="1000">
+                        <Label text="My tasks" styleClass="section-title" />
+                        <VBox fx:id="myTasksVBox" spacing="5" />
+                    </VBox>
+                        
+                    <VBox spacing="10" styleClass="section" prefWidth="1000">
+                        <Label text="My projects" styleClass="section-title" />
+                        <VBox fx:id="myProjectsVBox" spacing="5" />
+                    </VBox>
+                </HBox>
+            </VBox>
         </VBox>
 
         <!-- Project View -->
         <VBox fx:id="projectViewVBox" visible="false" managed="false" VBox.vgrow="ALWAYS">
             <Label text="Project View" styleClass="project-title" />
-            <TabPane VBox.vgrow="ALWAYS">
-                <Tab text="Board View">
+            <TabPane VBox.vgrow="ALWAYS" styleClass="tab-pane">
+                <Tab text="Board">
                     <ScrollPane fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="board-scroll-pane">
                         <content>
                             <HBox fx:id="projectBoardHBox" fillHeight="false" spacing="10">
@@ -81,7 +84,7 @@
                         </content>
                     </ScrollPane>
                 </Tab>
-                <Tab text="List View">
+                <Tab text="Calendar">
                     <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
                         <!-- CalendarFX CalendarView -->
                         <CalendarView fx:id="calendarView" VBox.vgrow="ALWAYS"/>
@@ -107,7 +110,7 @@
         </VBox>
 
         <!-- Create Project View -->
-        <VBox fx:id="createProjectViewVBox" HBox.hgrow="ALWAYS" styleClass="center-panel" visible="false" managed="false">
+        <VBox fx:id="createProjectViewVBox" HBox.hgrow="ALWAYS" styleClass="home-view" visible="false" managed="false">
             <Label text="Create Project" styleClass="view-title" />
             <Label text="Project Name" />
             <TextField fx:id="newProjectNameField" />
@@ -134,25 +137,29 @@
                 <Button text="Create Project" onAction="#handleCreateProject"/>
                 <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
-            <VBox fx:id="taskCreateVBox" spacing="10" visible="false" managed="false">
+            <VBox fx:id="taskCreateVBox" spacing="15" visible="false" managed="false">
                 <Label text="Task Create" styleClass="right-panel-title" />
-                <Label text="Task Name" />
-                <TextField fx:id="taskNameField" />
-                <Label text="Task Description" />
-                <TextArea fx:id="taskDescriptionArea" />
-                <Label text="Beginning Date" />
-                <DatePicker fx:id="beginningDatePicker" />
-                <Label text="Ending Date" />
-                <DatePicker fx:id="endingDatePicker" />
-                <Label text="Responsible for the Task" />
-                <ComboBox fx:id="responsibleComboBox" />
-                <Label text="Tags" />
-                <FlowPane fx:id="taskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" />
-                <ComboBox fx:id="availableTagsComboBox" promptText="Add Tag" onAction="#handleTagSelection"/>
+                <GridPane hgap="10" vgap="10">
+                    <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="taskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                </GridPane>
+                    <Label text="Task Description" styleClass="right-panel-label"/>
+                    <TextArea fx:id="taskDescriptionArea" prefWidth="150" prefHeight="100"/>
+                <GridPane hgap="10" vgap="15">
+                    <Label text="Beginning Date:" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="beginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="Ending Date:" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="endingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Responsible user:" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="responsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Tags:" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <FlowPane fx:id="taskTagsPane" orientation="HORIZONTAL" prefWidth="200" hgap="5" vgap="7" styleClass="right-panel-flow" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="availableTagsComboBox" promptText="Add Tag" onAction="#handleTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                </GridPane>
                 <Button text="Create Task" onAction="#handleCreateTask"/>
                 <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
-                <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
+            <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
                 <Label text="Edit Task" styleClass="right-panel-title" />
                 <Label text="Task Name" />
                 <TextField fx:id="editTaskNameField" />
