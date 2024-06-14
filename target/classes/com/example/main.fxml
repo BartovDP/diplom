@@ -12,6 +12,8 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -118,6 +120,10 @@
             <TextArea fx:id="newProjectDescriptionArea" />
             <Label text="Project Template" />
             <ComboBox fx:id="projectTemplateComboBox" promptText="Select Template" />
+            <Label text="Group" />
+            <TextField fx:id="projectGroupField" />
+            <Label text="Color" />
+            <ColorPicker fx:id="projectColorPicker" />
             <Button text="Create Project" onAction="#handleCreateProject" />
         </VBox>
     </VBox>
@@ -137,14 +143,19 @@
                 <Button text="Create Project" onAction="#handleCreateProject"/>
                 <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
+            <!-- Create Task Section -->
             <VBox fx:id="taskCreateVBox" spacing="15" visible="false" managed="false">
                 <Label text="Task Create" styleClass="right-panel-title" />
                 <GridPane hgap="10" vgap="10">
                     <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <TextField fx:id="taskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="Status" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <ChoiceBox fx:id="taskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Color" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ColorPicker fx:id="taskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
                 </GridPane>
-                    <Label text="Task Description" styleClass="right-panel-label"/>
-                    <TextArea fx:id="taskDescriptionArea" prefWidth="150" prefHeight="100"/>
+                <Label text="Task Description" styleClass="right-panel-label"/>
+                <TextArea fx:id="taskDescriptionArea" prefWidth="150" prefHeight="100"/>
                 <GridPane hgap="10" vgap="15">
                     <Label text="Beginning Date:" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <DatePicker fx:id="beginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
@@ -159,21 +170,31 @@
                 <Button text="Create Task" onAction="#handleCreateTask"/>
                 <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
+
+            <!-- Edit Task Section -->
             <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
                 <Label text="Edit Task" styleClass="right-panel-title" />
-                <Label text="Task Name" />
-                <TextField fx:id="editTaskNameField" />
-                <Label text="Task Description" />
-                <TextArea fx:id="editTaskDescriptionArea" />
-                <Label text="Beginning Date" />
-                <DatePicker fx:id="editBeginningDatePicker" />
-                <Label text="Ending Date" />
-                <DatePicker fx:id="editEndingDatePicker" />
-                <Label text="Responsible for the Task" />
-                <ComboBox fx:id="editResponsibleComboBox" />
-                <Label text="Tags" />
-                <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" />
-                <ComboBox fx:id="editAvailableTagsComboBox" promptText="Add Tag" onAction="#handleEditTagSelection"/>
+                <GridPane hgap="10" vgap="10">
+                    <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="editTaskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="Status" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <ChoiceBox fx:id="editTaskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Color" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ColorPicker fx:id="editTaskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                </GridPane>
+                <Label text="Task Description" styleClass="right-panel-label"/>
+                <TextArea fx:id="editTaskDescriptionArea" prefWidth="150" prefHeight="100"/>
+                <GridPane hgap="10" vgap="15">
+                    <Label text="Beginning Date" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="editBeginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="Ending Date" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="editEndingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Responsible for the Task" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="editResponsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Tags" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="editAvailableTagsComboBox" promptText="Add Tag" onAction="#handleEditTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                </GridPane>
                 <Button text="Save Changes" onAction="#handleEditTask"/>
                 <Button text="Delete Task" onAction="#handleDeleteTask" />
                 <Button text="Cancel" onAction="#handleCancel"/>

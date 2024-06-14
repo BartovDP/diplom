@@ -7,65 +7,71 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.ColorUtils;
 import com.example.DatabaseManager;
 import com.example.PasswordUtils;
 
 public class Project {
 
     public static List<ProjectDetails> getProjectsForUser(String username) {
-        String query = "SELECT projects.proj_id, projects.proj_name, projects.proj_desc, projects.proj_template, projects.share_key " +
-                "FROM projects " +
-                "JOIN pu_connector ON projects.proj_id = pu_connector.proj_id " +
-                "JOIN userlist ON pu_connector.user_id = userlist.user_id " +
-                "WHERE userlist.user_name = ?";
-        List<ProjectDetails> projects = new ArrayList<>();
-    
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-    
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-    
-            while (resultSet.next()) {
-                int projectId = resultSet.getInt("proj_id");
-                String projectName = resultSet.getString("proj_name");
-                String projectDescription = resultSet.getString("proj_desc");
-                String projectTemplate = resultSet.getString("proj_template");
-                String shareKey = resultSet.getString("share_key");
-                projects.add(new ProjectDetails(projectId, projectName, projectDescription, projectTemplate, shareKey));
-            }
-    
-        } catch (SQLException e) {
-            e.printStackTrace();
+    String query = "SELECT projects.proj_id, projects.proj_name, projects.proj_desc, projects.proj_template, projects.share_key, projects.proj_group, projects.proj_color " +
+                   "FROM projects " +
+                   "JOIN pu_connector ON projects.proj_id = pu_connector.proj_id " +
+                   "JOIN userlist ON pu_connector.user_id = userlist.user_id " +
+                   "WHERE userlist.user_name = ?";
+    List<ProjectDetails> projects = new ArrayList<>();
+
+    try (Connection connection = DatabaseManager.getConnection();
+         PreparedStatement statement = connection.prepareStatement(query)) {
+
+        statement.setString(1, username);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            int projectId = resultSet.getInt("proj_id");
+            String projectName = resultSet.getString("proj_name");
+            String projectDescription = resultSet.getString("proj_desc");
+            String projectTemplate = resultSet.getString("proj_template");
+            String shareKey = resultSet.getString("share_key");
+            String projectGroup = resultSet.getString("proj_group");
+            String projectColor = ColorUtils.convertDbColorToCss(resultSet.getString("proj_color"));
+            projects.add(new ProjectDetails(projectId, projectName, projectDescription, projectTemplate, shareKey, projectGroup, projectColor));
         }
-    
-        return projects;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
 
-    public static int createProject(String projectName, String projectDescription, int userId, String template) {
-        String query = "INSERT INTO projects (proj_name, proj_desc, proj_template, share_key) VALUES (?, ?, ?, ?)";
+    return projects;
+}
+
+
+    public static int createProject(String projectName, String projectDescription, int userId, String template, String projectGroup, String projectColor) {
+        String query = "INSERT INTO projects (proj_name, proj_desc, proj_template, share_key, proj_group, proj_color) VALUES (?, ?, ?, ?, ?, ?)";
         int projectId = -1;
         String shareKey = PasswordUtils.hashPassword(projectName + userId);
-
+    
         try (Connection connection = DatabaseManager.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
+             PreparedStatement statement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+    
             statement.setString(1, projectName);
             statement.setString(2, projectDescription);
             statement.setString(3, template);
             statement.setString(4, shareKey);
+            statement.setString(5, projectGroup);
+            statement.setString(6, projectColor);
             statement.executeUpdate();
-
+    
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 projectId = generatedKeys.getInt(1);
                 linkProjectToUser(projectId, userId);
             }
-
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+    
         return projectId;
     }
 
@@ -99,7 +105,7 @@ public class Project {
     }
 
     public static ProjectDetails getProjectDetails(int projectId) {
-        String query = "SELECT proj_name, proj_desc, proj_template, share_key FROM projects WHERE proj_id = ?";
+        String query = "SELECT proj_name, proj_desc, proj_template, share_key, proj_group, proj_color FROM projects WHERE proj_id = ?";
         ProjectDetails projectDetails = null;
     
         try (Connection connection = DatabaseManager.getConnection();
@@ -113,14 +119,17 @@ public class Project {
                 String projectDescription = resultSet.getString("proj_desc");
                 String projectTemplate = resultSet.getString("proj_template");
                 String shareKey = resultSet.getString("share_key");
-                projectDetails = new ProjectDetails(projectId, projectName, projectDescription, projectTemplate, shareKey);
+                String projectGroup = resultSet.getString("proj_group");
+                String projectColor = ColorUtils.convertDbColorToCss(resultSet.getString("proj_color"));
+                projectDetails = new ProjectDetails(projectId, projectName, projectDescription, projectTemplate, shareKey, projectGroup, projectColor);
             }
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
     
         return projectDetails;
-    }
+    }    
 
     public static List<String> getUsersWithAccess(int projectId) {
         String query = "SELECT userlist.user_name FROM userlist " +

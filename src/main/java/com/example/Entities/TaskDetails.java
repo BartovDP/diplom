@@ -7,12 +7,16 @@ public class TaskDetails {
     private String taskDescription;
     private LocalDate beginningDate;
     private LocalDate endingDate;
+    private String taskStatus;
+    private String taskColor;
 
-    public TaskDetails(String taskName, String taskDescription, LocalDate beginningDate, LocalDate endingDate) {
+    public TaskDetails(String taskName, String taskDescription, LocalDate beginningDate, LocalDate endingDate, String taskStatus, String taskColor) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.beginningDate = beginningDate;
         this.endingDate = endingDate;
+        this.taskStatus = taskStatus;
+        this.taskColor = taskColor;
     }
 
     public String getTaskName() {
@@ -29,5 +33,13 @@ public class TaskDetails {
 
     public LocalDate getEndingDate() {
         return endingDate;
+    }
+
+    public String getTaskStatus() {
+        return taskStatus;
+    }
+
+    public String getTaskColor() {
+        return taskColor;
     }
 }

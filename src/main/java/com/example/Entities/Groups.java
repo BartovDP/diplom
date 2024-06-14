@@ -40,34 +40,6 @@ public class Groups {
         return groups;
     }
 
-    public static List<String> getTasksForGroup(int projId, int tagId, int groupId) {
-        String query = "SELECT DISTINCT t.task_name " +
-                       "FROM tasklist t " +
-                       "JOIN tag_connector tc ON t.task_id = tc.task_id " +
-                       "JOIN taglist tl ON tc.tag_id = tl.tag_id " +
-                       "JOIN grouplist g ON tl.tag_id = g.tag_id " +
-                       "WHERE g.tag_id = ? AND t.proj_id = ? AND g.group_id = ?";
-        List<String> tasks = new ArrayList<>();
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setInt(1, tagId);
-            statement.setInt(2, projId);
-            statement.setInt(3, groupId);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                tasks.add(resultSet.getString("task_name"));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return tasks;
-    }
-
     public static void createGroup(int projectId, int position, String groupName, int tagId) {
         String query = "INSERT INTO grouplist (proj_id, position, group_name, tag_id) VALUES (?, ?, ?, ?)";
 

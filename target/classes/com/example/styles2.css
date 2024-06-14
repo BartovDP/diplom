@@ -88,7 +88,7 @@
 
 /* ScrollPane's Viewport */
 .scroll-pane .viewport {
-    -fx-background-image: url(mountain.jpg);
+    -fx-background-image: url(stars.jpg);
     -fx-background-size: cover;
 }
 
@@ -106,7 +106,7 @@
 }
 
 .task-group-title {
-    -fx-background-color: #696969;
+    -fx-background-color: #ba3a3a;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-pref-width: 300;
@@ -133,8 +133,8 @@
     -fx-background-color: #ffffff;
     -fx-padding: 10 5 5 5;
     -fx-spacing: 5;
-    -fx-border-radius: 0 5 5 0;
-    -fx-background-radius: 0 5 5 0;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
     -fx-cursor: hand;
 }
 
@@ -143,12 +143,6 @@
     -fx-cursor: hand;
     -fx-font-size: 14px;
     -fx-text-fill: #34495e;
-}
-
-.colored-task-container {
-    -fx-padding: 0 0 0 10;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
 }
 
 .tags-pane {
@@ -183,7 +177,7 @@
 
 .center-padding {
     -fx-background-color: #a0a4a7;
-    -fx-background-image: url(mountain.jpg);
+    -fx-background-image: url(stars.jpg);
     -fx-background-size: cover;
     -fx-padding: 75;
 }
@@ -238,6 +232,6 @@
 
 .tab-pane {
     -fx-background-color: #2c3e50;
-    -fx-background-image: url(mountain.jpg);
+    -fx-background-image: url(stars.jpg);
     -fx-background-size: cover;
 }

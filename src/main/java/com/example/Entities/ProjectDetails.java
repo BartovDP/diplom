@@ -6,13 +6,17 @@ public class ProjectDetails {
     private String projectDescription;
     private String projectTemplate;
     private String shareKey;
+    private String projectGroup;
+    private String projectColor;
 
-    public ProjectDetails(int projectId, String projectName, String projectDescription, String projectTemplate, String shareKey) {
+    public ProjectDetails(int projectId, String projectName, String projectDescription, String projectTemplate, String shareKey, String projectGroup, String projectColor) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.projectTemplate = projectTemplate;
         this.shareKey = shareKey;
+        this.projectGroup = projectGroup;
+        this.projectColor = projectColor;
     }
 
     public int getProjectId() {
@@ -33,5 +37,13 @@ public class ProjectDetails {
 
     public String getShareKey() {
         return shareKey;
+    }
+
+    public String getProjectGroup() {
+        return projectGroup;
+    }
+
+    public String getProjectColor() {
+        return projectColor;
     }
 }
