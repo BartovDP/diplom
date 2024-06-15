@@ -13,12 +13,16 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.control.TreeItem?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.GridPane?>
 <?import com.calendarfx.view.CalendarView?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 
 <HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@styles.css">
     <!-- Left Panel (Menu) -->
@@ -93,19 +97,52 @@
                     </VBox>
                 </Tab>
                 <Tab text="Overview">
-                    <VBox fx:id="overviewVBox">
-                        <Label text="Project Overview" styleClass="view-title" />
-                        <Label text="Name:" />
-                        <Label fx:id="projectNameLabel" />
-                        <Label text="Description:" />
-                        <Label fx:id="projectDescriptionLabel" />
-                        <Label text="Template:" />
-                        <Label fx:id="projectTemplateLabel" />
-                        <Label text="User Access:" />
-                        <VBox fx:id="userAccessVBox" spacing="5" />
-                        <Label text="Invite users with project key:" />
-                        <Label fx:id="projectKeyLabel" onMouseClicked="#handleCopyProjectKey" styleClass="clickable-label"/>
-                        <Button text="Delete Project" onAction="#handleDeleteProject" />
+                    <ScrollPane fitToHeight="true" VBox.vgrow="ALWAYS">
+                        <content>
+                            <VBox fx:id="overviewVBox" styleClass="overview-container" spacing="10">
+                                <Label text="Project Overview" styleClass="overview-title" />
+                                
+                                <VBox styleClass="overview-section">
+                                    <Label text="Name:" styleClass="overview-label" />
+                                    <Label fx:id="projectNameLabel" styleClass="overview-value" />
+                                </VBox>
+                                
+                                <VBox styleClass="overview-section">
+                                    <Label text="Description:" styleClass="overview-label" />
+                                    <Label fx:id="projectDescriptionLabel" styleClass="overview-value" />
+                                </VBox>
+                                
+                                <VBox styleClass="overview-section">
+                                    <Label text="Template:" styleClass="overview-label" />
+                                    <Label fx:id="projectTemplateLabel" styleClass="overview-value" />
+                                </VBox>
+                                
+                                <VBox styleClass="overview-section">
+                                    <Label text="User Access:" styleClass="overview-label" />
+                                    <VBox fx:id="userAccessVBox" styleClass="overview-value" spacing="5" />
+                                </VBox>
+                                
+                                <VBox styleClass="overview-section">
+                                    <Label text="Invite users with project key:" styleClass="overview-label" />
+                                    <Label fx:id="projectKeyLabel" onMouseClicked="#handleCopyProjectKey" styleClass="clickable-label overview-value" />
+                                </VBox>
+                                
+                                <Button text="Delete Project" onAction="#handleDeleteProject" styleClass="overview-button" />
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </Tab>
+                <Tab text="Task List">
+                    <VBox fx:id="taskListVBox" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="taskTableView" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                            <columns>
+                                <TableColumn fx:id="taskNameColumn" text="Task Name" prefWidth="150"/>
+                                <TableColumn fx:id="taskDescColumn" text="Description" prefWidth="300"/>
+                                <TableColumn fx:id="taskStatusColumn" text="Status" prefWidth="100"/>
+                                <TableColumn fx:id="taskBeginDateColumn" text="Begin Date" prefWidth="120"/>
+                                <TableColumn fx:id="taskEndDateColumn" text="End Date" prefWidth="120"/>
+                            </columns>
+                        </TableView>
                     </VBox>
                 </Tab>
             </TabPane>
@@ -144,60 +181,60 @@
                 <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
             <!-- Create Task Section -->
-            <VBox fx:id="taskCreateVBox" spacing="15" visible="false" managed="false">
+            <VBox fx:id="taskCreateVBox" spacing="15" visible="false" managed="false" styleClass="right-panel">
                 <Label text="Task Create" styleClass="right-panel-title" />
                 <GridPane hgap="10" vgap="10">
                     <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="taskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <TextField fx:id="taskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Status" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <ChoiceBox fx:id="taskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <ChoiceBox fx:id="taskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Color" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <ColorPicker fx:id="taskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <ColorPicker fx:id="taskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
                 <Label text="Task Description" styleClass="right-panel-label"/>
-                <TextArea fx:id="taskDescriptionArea" prefWidth="150" prefHeight="100"/>
+                <TextArea fx:id="taskDescriptionArea" prefWidth="150" prefHeight="100" styleClass="right-panel-input"/>
                 <GridPane hgap="10" vgap="15">
                     <Label text="Beginning Date:" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <DatePicker fx:id="beginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <DatePicker fx:id="beginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Ending Date:" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <DatePicker fx:id="endingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <DatePicker fx:id="endingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Responsible user:" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <ComboBox fx:id="responsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="responsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Tags:" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                     <FlowPane fx:id="taskTagsPane" orientation="HORIZONTAL" prefWidth="200" hgap="5" vgap="7" styleClass="right-panel-flow" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                    <ComboBox fx:id="availableTagsComboBox" promptText="Add Tag" onAction="#handleTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="availableTagsComboBox" promptText="Add Tag" onAction="#handleTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Button text="Create Task" onAction="#handleCreateTask"/>
-                <Button text="Cancel" onAction="#handleCancel"/>
+                <Button text="Create Task" onAction="#handleCreateTask" styleClass="right-panel-button"/>
+                <Button text="Cancel" onAction="#handleCancel" styleClass="right-panel-button"/>
             </VBox>
 
             <!-- Edit Task Section -->
-            <VBox fx:id="taskEditVBox" spacing="10" visible="false" managed="false">
+            <VBox fx:id="taskEditVBox" spacing="15" visible="false" managed="false" styleClass="right-panel">
                 <Label text="Edit Task" styleClass="right-panel-title" />
                 <GridPane hgap="10" vgap="10">
                     <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="editTaskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <TextField fx:id="editTaskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Status" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <ChoiceBox fx:id="editTaskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <ChoiceBox fx:id="editTaskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Color" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <ColorPicker fx:id="editTaskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <ColorPicker fx:id="editTaskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
                 <Label text="Task Description" styleClass="right-panel-label"/>
-                <TextArea fx:id="editTaskDescriptionArea" prefWidth="150" prefHeight="100"/>
+                <TextArea fx:id="editTaskDescriptionArea" prefWidth="150" prefHeight="100" styleClass="right-panel-input"/>
                 <GridPane hgap="10" vgap="15">
                     <Label text="Beginning Date" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <DatePicker fx:id="editBeginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <DatePicker fx:id="editBeginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Ending Date" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <DatePicker fx:id="editEndingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <DatePicker fx:id="editEndingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Responsible for the Task" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <ComboBox fx:id="editResponsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="editResponsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Tags" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                    <ComboBox fx:id="editAvailableTagsComboBox" promptText="Add Tag" onAction="#handleEditTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="right-panel-flow"/>
+                    <ComboBox fx:id="editAvailableTagsComboBox" promptText="Add Tag" onAction="#handleEditTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Button text="Save Changes" onAction="#handleEditTask"/>
-                <Button text="Delete Task" onAction="#handleDeleteTask" />
-                <Button text="Cancel" onAction="#handleCancel"/>
+                <Button text="Save Changes" onAction="#handleEditTask" styleClass="right-panel-button"/>
+                <Button text="Delete Task" onAction="#handleDeleteTask" styleClass="right-panel-button"/>
+                <Button text="Cancel" onAction="#handleCancel" styleClass="right-panel-button"/>
             </VBox>
         </children>
     </VBox>

@@ -13,6 +13,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.collections.ObservableList;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -127,6 +129,20 @@ public class MainController {
     private ChoiceBox<String> editTaskStatusChoiceBox;
     @FXML
     private ColorPicker editTaskColorPicker;
+    @FXML
+    private VBox taskListVBox;
+    @FXML
+    private TableView<TaskDetails> taskTableView;
+    @FXML
+    private TableColumn<TaskDetails, String> taskNameColumn;
+    @FXML
+    private TableColumn<TaskDetails, String> taskDescColumn;
+    @FXML
+    private TableColumn<TaskDetails, String> taskStatusColumn;
+    @FXML
+    private TableColumn<TaskDetails, LocalDate> taskBeginDateColumn;
+    @FXML
+    private TableColumn<TaskDetails, LocalDate> taskEndDateColumn;
 
     private Calendar taskCalendar;
     private VBox currentEditTaskBox;
@@ -141,6 +157,19 @@ public class MainController {
 
     @FXML
     private void initialize() {
+
+        taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("taskName"));
+        taskDescColumn.setCellValueFactory(new PropertyValueFactory<>("taskDescription"));
+        taskStatusColumn.setCellValueFactory(new PropertyValueFactory<>("taskStatus"));
+        taskBeginDateColumn.setCellValueFactory(new PropertyValueFactory<>("beginningDate"));
+        taskEndDateColumn.setCellValueFactory(new PropertyValueFactory<>("endingDate"));
+
+        taskTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                handleTableRowClick();
+            }
+        });
+
         projectTemplateComboBox.setItems(FXCollections.observableArrayList("Template One", "Template Two"));
         taskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done"));
         taskStatusChoiceBox.setValue("Planned");
@@ -565,12 +594,30 @@ private void handleTaskClick(MouseEvent event) {
         stopListening();
         startListening(projectId);
         loadTasksForCalendar(projectId);
+        loadTasksForProject(currentProjectId);
     }
+
+    @FXML
+    private void handleTableRowClick() {
+        TaskDetails selectedTask = taskTableView.getSelectionModel().getSelectedItem();
+        if (selectedTask != null) {
+            fillEditTaskFields(selectedTask.getTaskName());
+            loadTaskTags(selectedTask.getTaskName(), editTaskTagsPane, editAvailableTagsComboBox);
+            showRightPanel("editTask");
+        }
+    }
+
 
     
     private void loadTasksForCalendar(int projectId) {
         List<TaskDetails> tasks = Task.getTasksForProject(projectId);
         loadTasksIntoCalendar(tasks);
+    }
+
+    private void loadTasksForProject(int projectId) {
+        List<TaskDetails> tasks = Task.getTasksForProject(projectId);
+        ObservableList<TaskDetails> taskList = FXCollections.observableArrayList(tasks);
+        taskTableView.setItems(taskList);
     }
 
     public void loadTasksIntoCalendar(List<TaskDetails> tasks) {
