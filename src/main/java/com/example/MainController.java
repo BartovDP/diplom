@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -17,6 +18,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -151,6 +153,7 @@ public class MainController {
         loadTags();
 
         taskCalendar = new Calendar("Tasks");
+        taskCalendar.setReadOnly(true);
         CalendarSource calendarSource = new CalendarSource("My Calendars");
         calendarSource.getCalendars().add(taskCalendar);
 
@@ -179,16 +182,17 @@ public class MainController {
     }
 
     @FXML
-    private void handleTaskClick(MouseEvent event) {
-        currentEditTaskBox = (VBox) event.getSource();
-        Label taskLabel = (Label) currentEditTaskBox.getChildren().get(0);
-        currentTaskName = taskLabel.getText();
+private void handleTaskClick(MouseEvent event) {
+    VBox clickedTaskBox = (VBox) event.getSource();
+    HBox taskLabelContainer = (HBox) clickedTaskBox.getChildren().get(0);
+    Label taskLabel = (Label) taskLabelContainer.getChildren().get(0);
+    currentTaskName = taskLabel.getText();
 
-        fillEditTaskFields(currentTaskName);
-        loadTaskTags(currentTaskName, editTaskTagsPane, editAvailableTagsComboBox);
+    fillEditTaskFields(currentTaskName);
+    loadTaskTags(currentTaskName, editTaskTagsPane, editAvailableTagsComboBox);
 
-        showRightPanel("editTask");
-    }
+    showRightPanel("editTask");
+}
 
     @FXML
     private void handleCreateProject() {
@@ -386,30 +390,60 @@ public class MainController {
     }
 
     private void addTaskToGroup(VBox taskGroup, TaskDetails taskDetails, List<String> tags) {
-        VBox taskBox = new VBox();
-        taskBox.setSpacing(5);
-        taskBox.getStyleClass().add("task-box");
-        
-        taskBox.setOnMouseClicked(this::handleTaskClick);
-        
-        Label taskLabel = new Label(taskDetails.getTaskName());
-        taskLabel.getStyleClass().add("task-label");
-        
-        FlowPane tagsPane = new FlowPane();
-        tagsPane.getStyleClass().add("tags-pane");
-        
-        // Render tags for the task
-        renderTaskTags(tagsPane, tags);
-        
-        taskBox.getChildren().addAll(taskLabel, tagsPane);
-        
-        VBox coloredContainer = new VBox(taskBox);
-        coloredContainer.setStyle("-fx-background-color: " + taskDetails.getTaskColor() + ";");
-        coloredContainer.getStyleClass().add("colored-task-container");
-        coloredContainer.setPadding(new Insets(5));  // Add some padding if necessary
-        
-        taskGroup.getChildren().add(coloredContainer);
+    VBox taskBox = new VBox();
+    taskBox.setSpacing(5); 
+    taskBox.getStyleClass().add("task-box");
+
+    taskBox.setOnMouseClicked(this::handleTaskClick);
+
+    HBox taskLabelContainer = new HBox();
+    taskLabelContainer.setSpacing(10);
+
+    Label taskLabel = new Label(taskDetails.getTaskName());
+    taskLabel.getStyleClass().add("task-label");
+
+    Label taskStatus = new Label();
+    loadTaskStatus(taskStatus, taskDetails.getTaskStatus());
+
+    taskLabelContainer.getChildren().addAll(taskLabel, taskStatus);
+
+    FlowPane tagsPane = new FlowPane();
+    tagsPane.getStyleClass().add("tags-pane");
+
+    // Render tags for the task
+    renderTaskTags(tagsPane, tags);
+
+    // Format dates
+    String formattedBeginDate = taskDetails.getBeginningDate().format(DateTimeFormatter.ofPattern("dd.MM.yy"));
+    String formattedEndDate = taskDetails.getEndingDate().format(DateTimeFormatter.ofPattern("dd.MM.yy"));
+    Label dateLabel = new Label(formattedBeginDate + " - " + formattedEndDate);
+    dateLabel.getStyleClass().add("date-label");
+    dateLabel.setAlignment(Pos.CENTER_RIGHT);
+    HBox dateContainer = new HBox(dateLabel);
+    dateContainer.setAlignment(Pos.CENTER_RIGHT);
+
+    taskBox.getChildren().addAll(taskLabelContainer, tagsPane, dateContainer);
+
+    VBox coloredContainer = new VBox(taskBox);
+    coloredContainer.setStyle("-fx-background-color: " + taskDetails.getTaskColor() + ";");
+    coloredContainer.getStyleClass().add("colored-container");
+    coloredContainer.setPadding(new Insets(5));  // Add some padding if necessary
+
+    taskGroup.getChildren().add(coloredContainer);
+}
+
+    
+    
+    private void loadTaskStatus(Label taskStatusLabel, String status) {
+        if ("done".equalsIgnoreCase(status)) {
+            taskStatusLabel.setText("✔");
+            taskStatusLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+        } else {
+            taskStatusLabel.setText("✖");
+            taskStatusLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        }
     }
+    
     
 
     private void renderTaskTags(FlowPane tagsPane, List<String> tags) {
@@ -417,9 +451,11 @@ public class MainController {
         for (String tag : tags) {
             Label tagLabel = new Label(tag);
             tagLabel.getStyleClass().add("tags-pane-label");
-            VBox tagPane = new VBox();
+            HBox tagPane = new HBox();
             tagPane.getStyleClass().add("tags-pane-label-back");
-            tagPane.getChildren().add(tagLabel);
+            Label colorLabel = new Label("@");
+            colorLabel.setStyle("-fx-text-fill: " + ColorUtils.convertDbColorToCss(Tags.getTagColor(tag) + ";"));
+            tagPane.getChildren().addAll(colorLabel, tagLabel);
             tagsPane.getChildren().add(tagPane);
         }
     }    
@@ -569,36 +605,40 @@ public class MainController {
     private void loadTaskGroupsForProject(int projectId) {
         List<GroupDetails> groups = Groups.getGroupsForProject(projectId);
         projectBoardHBox.getChildren().clear();
-
+    
         for (GroupDetails group : groups) {
             int groupId = group.getGroupId();
             String groupName = group.getGroupName();
             int tagId = group.getTagId();
-
+            String tagColor = ColorUtils.convertDbColorToCss(Tags.getTagColor(Tags.getTagNameById(tagId)));
+    
             VBox taskGroup = new VBox();
             taskGroup.getStyleClass().add("task-group");
-
+    
             Label groupLabel = new Label(groupName);
-            VBox labelBox = new VBox();
             groupLabel.getStyleClass().add("task-group-title");
-            labelBox.getChildren().add(groupLabel);
-
+    
+            VBox labelBox = new VBox(groupLabel);
+            labelBox.getStyleClass().add("colored-container2");
+            labelBox.setStyle("-fx-background-color: " + tagColor + ";");
+    
             Label addTaskLabel = new Label("Add task");
             addTaskLabel.setOnMouseClicked(event -> handleAddTask(groupId, taskGroup, tagId));
             addTaskLabel.getStyleClass().add("add-task-label");
-
+    
             VBox tasksVBox = new VBox();
             tasksVBox.getStyleClass().add("task-group-tasklist");
             tasksVBox.setId("tasksVBox" + groupId);
-            tasksVBox.getChildren().add(addTaskLabel);
-
+    
             taskGroup.getChildren().addAll(labelBox, tasksVBox);
             projectBoardHBox.getChildren().add(taskGroup);
-
-            // Загрузка задач для данной группы
+    
+            // Load tasks for this group
             loadTasksForGroup(currentProjectId, tagId, groupId, tasksVBox);
+            tasksVBox.getChildren().add(addTaskLabel);
         }
-    } 
+    }
+     
 
     private void loadTasksForGroup(int projId, int tagId, int groupId, VBox tasksVBox) {
         List<TaskDetails> tasks = Task.getTasksForGroup(projId, tagId, groupId);

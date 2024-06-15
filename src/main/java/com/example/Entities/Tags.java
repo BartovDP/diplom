@@ -73,6 +73,27 @@ public class Tags {
         return tagName;
     }
 
+    public static String getTagColor(String tagName) {
+        String query = "SELECT tag_color FROM taglist WHERE tag_name = ?";
+        String tagColor = null;
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, tagName);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                tagColor = resultSet.getString("tag_color");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tagColor;
+    }
+
     public static List<String> getTagsForTask(int taskId) {
         String query = "SELECT tag_name FROM taglist tl " +
                 "JOIN tag_connector tc ON tl.tag_id = tc.tag_id " +

@@ -100,20 +100,21 @@
 
 .task-group {
     -fx-background-color: #e2e2e2;
+    -fx-border-color: #bdc3c7;
     -fx-pref-width: 300;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
 }
 
 .task-group-title {
-    -fx-background-color: #696969;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 0 5 0 0;
+    -fx-background-radius: 0 5 0 0;
     -fx-pref-width: 300;
     -fx-padding: 10;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #242424;
 }
 
 .task-group-tasklist {
@@ -131,10 +132,12 @@
 
 .task-box {
     -fx-background-color: #ffffff;
+    -fx-border-color: #bdc3c7;
     -fx-padding: 10 5 5 5;
     -fx-spacing: 5;
     -fx-border-radius: 0 5 5 0;
     -fx-background-radius: 0 5 5 0;
+    -fx-pref-height: 50;
     -fx-cursor: hand;
 }
 
@@ -145,10 +148,37 @@
     -fx-text-fill: #34495e;
 }
 
-.colored-task-container {
-    -fx-padding: 0 0 0 10;
+.task-status {
+    -fx-text-fill: rgb(255, 255, 255);
+    -fx-background-color: rgb(130, 44, 44);
+}
+
+.task-content {
+    -fx-spacing: 5;
+    -fx-hgap: 5;
+    -fx-vgap: 5;
+    -fx-background-color: rgb(232, 231, 231);
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+.task-dates {
+    -fx-fill-width: true;
+}
+
+.colored-container {
+    -fx-padding: 0 0 0 7;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.colored-container2 {
+    -fx-padding: 0 0 0 7;
+    -fx-border-radius: 5 5 0 0;
+    -fx-background-radius: 5 5 0 0;
 }
 
 .tags-pane {
@@ -164,7 +194,7 @@
 }
 
 .tags-pane-label-back {
-    -fx-background-color: rgb(118, 208, 63);
+    /*-fx-background-color: rgb(255, 36, 36); */
     -fx-padding: 3;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
@@ -240,4 +270,10 @@
     -fx-background-color: #2c3e50;
     -fx-background-image: url(mountain.jpg);
     -fx-background-size: cover;
+}
+
+
+.calendar-task {
+    -fx-background-color: #ff0000;
+    -fx-fill: #ff0000;
 }
