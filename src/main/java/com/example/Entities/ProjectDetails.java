@@ -19,6 +19,15 @@ public class ProjectDetails {
         this.projectColor = projectColor;
     }
 
+    public ProjectDetails(int projectId, String projectName, String projectDescription, String projectTemplate, String projectGroup, String projectColor) {
+        this.projectId = projectId;
+        this.projectName = projectName;
+        this.projectDescription = projectDescription;
+        this.projectTemplate = projectTemplate;
+        this.projectGroup = projectGroup;
+        this.projectColor = projectColor;
+    }
+
     public int getProjectId() {
         return projectId;
     }

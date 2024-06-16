@@ -143,6 +143,10 @@ public class MainController {
     private TableColumn<TaskDetails, LocalDate> taskBeginDateColumn;
     @FXML
     private TableColumn<TaskDetails, LocalDate> taskEndDateColumn;
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private VBox userTasksVBox;
 
     private Calendar taskCalendar;
     private VBox currentEditTaskBox;
@@ -171,12 +175,14 @@ public class MainController {
         });
 
         projectTemplateComboBox.setItems(FXCollections.observableArrayList("Template One", "Template Two"));
-        taskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done"));
+        taskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done", "Canceled"));
         taskStatusChoiceBox.setValue("Planned");
         editTaskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done"));
 
         username = LoginController.getUsername();
+        usernameLabel.setText(username);
         loadProjectsForUser(username);
+        loadProjectGroupsForUser(username);
         loadTasksForUser();
 
         loadTags();
@@ -196,6 +202,11 @@ public class MainController {
         calendarView.setShowSourceTrayButton(false);
         calendarView.setShowAddCalendarButton(false);
 
+    }
+
+    @FXML
+    private void handleChangeUserClick() {
+        // Логика для изменения пользователя
     }
 
     @FXML
@@ -240,7 +251,8 @@ private void handleTaskClick(MouseEvent event) {
                 Project.addTemplateTwo(projectId);
             }
 
-            loadProjectsForUser(username);
+            //loadProjectsForUser(username);
+            loadProjectGroupsForUser(username);
             setViewVisibility(homeViewVBox);
         } else {
             // Вывести сообщение об ошибке, если имя проекта не указано
@@ -375,7 +387,8 @@ private void handleTaskClick(MouseEvent event) {
     @FXML
     private void handleDeleteProject() {
         Project.deleteProject(currentProjectId);
-        loadProjectsForUser(username);
+        //loadProjectsForUser(username);
+        loadProjectGroupsForUser(username);
         setViewVisibility(homeViewVBox);
     }
 
@@ -419,59 +432,69 @@ private void handleTaskClick(MouseEvent event) {
     }
 
     private void addTaskToGroup(VBox taskGroup, TaskDetails taskDetails, List<String> tags) {
-    VBox taskBox = new VBox();
-    taskBox.setSpacing(5); 
-    taskBox.getStyleClass().add("task-box");
+        VBox taskBox = new VBox();
+        taskBox.setSpacing(5); 
+        taskBox.getStyleClass().add("task-box");
 
-    taskBox.setOnMouseClicked(this::handleTaskClick);
+        taskBox.setOnMouseClicked(this::handleTaskClick);
 
-    HBox taskLabelContainer = new HBox();
-    taskLabelContainer.setSpacing(10);
+        HBox taskLabelContainer = new HBox();
+        taskLabelContainer.setSpacing(10);
 
-    Label taskLabel = new Label(taskDetails.getTaskName());
-    taskLabel.getStyleClass().add("task-label");
+        Label taskLabel = new Label(taskDetails.getTaskName());
+        taskLabel.getStyleClass().add("task-label");
 
-    Label taskStatus = new Label();
-    loadTaskStatus(taskStatus, taskDetails.getTaskStatus());
+        Label taskStatus = new Label();
+        loadTaskStatus(taskStatus, taskDetails.getTaskStatus(), taskDetails.getEndingDate());
 
-    taskLabelContainer.getChildren().addAll(taskLabel, taskStatus);
+        taskLabelContainer.getChildren().addAll(taskLabel, taskStatus);
 
-    FlowPane tagsPane = new FlowPane();
-    tagsPane.getStyleClass().add("tags-pane");
+        FlowPane tagsPane = new FlowPane();
+        tagsPane.getStyleClass().add("tags-pane");
 
-    // Render tags for the task
-    renderTaskTags(tagsPane, tags);
+        // Render tags for the task
+        renderTaskTags(tagsPane, tags);
 
-    // Format dates
-    String formattedBeginDate = taskDetails.getBeginningDate().format(DateTimeFormatter.ofPattern("dd.MM.yy"));
-    String formattedEndDate = taskDetails.getEndingDate().format(DateTimeFormatter.ofPattern("dd.MM.yy"));
-    Label dateLabel = new Label(formattedBeginDate + " - " + formattedEndDate);
-    dateLabel.getStyleClass().add("date-label");
-    dateLabel.setAlignment(Pos.CENTER_RIGHT);
-    HBox dateContainer = new HBox(dateLabel);
-    dateContainer.setAlignment(Pos.CENTER_RIGHT);
+        // Format dates
+        String formattedBeginDate = taskDetails.getBeginningDate().format(DateTimeFormatter.ofPattern("dd.MM.yy"));
+        String formattedEndDate = taskDetails.getEndingDate().format(DateTimeFormatter.ofPattern("dd.MM.yy"));
+        Label dateLabel = new Label(formattedBeginDate + " - " + formattedEndDate);
+        dateLabel.getStyleClass().add("date-label");
+        dateLabel.setAlignment(Pos.CENTER_RIGHT);
+        HBox dateContainer = new HBox(dateLabel);
+        dateContainer.setAlignment(Pos.CENTER_RIGHT);
 
-    taskBox.getChildren().addAll(taskLabelContainer, tagsPane, dateContainer);
+        taskBox.getChildren().addAll(taskLabelContainer, tagsPane, dateContainer);
 
-    VBox coloredContainer = new VBox(taskBox);
-    coloredContainer.setStyle("-fx-background-color: " + taskDetails.getTaskColor() + ";");
-    coloredContainer.getStyleClass().add("colored-container");
-    coloredContainer.setPadding(new Insets(5));  // Add some padding if necessary
+        VBox coloredContainer = new VBox(taskBox);
+        coloredContainer.setStyle("-fx-background-color: " + taskDetails.getTaskColor() + ";");
+        coloredContainer.getStyleClass().add("colored-container");
+        coloredContainer.setPadding(new Insets(5));  // Add some padding if necessary
 
-    taskGroup.getChildren().add(coloredContainer);
-}
+        taskGroup.getChildren().add(coloredContainer);
+    }
 
     
     
-    private void loadTaskStatus(Label taskStatusLabel, String status) {
+    private void loadTaskStatus(Label taskStatusLabel, String status, LocalDate endDate) {
+        LocalDate currentDate = LocalDate.now();
+        taskStatusLabel.getStyleClass().clear(); // Очистить предыдущие классы стилей
+    
         if ("done".equalsIgnoreCase(status)) {
-            taskStatusLabel.setText("✔");
-            taskStatusLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
-        } else {
-            taskStatusLabel.setText("✖");
-            taskStatusLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+            taskStatusLabel.setText("✔ Done");
+            taskStatusLabel.getStyleClass().add("status-done");
+        } else if ("on confirmation".equalsIgnoreCase(status)) {
+            taskStatusLabel.setText("On Confirmation");
+            taskStatusLabel.getStyleClass().add("status-on-confirmation");
+        } else if ("canceled".equalsIgnoreCase(status)) {
+            taskStatusLabel.setText("✕ Canceled");
+            taskStatusLabel.getStyleClass().add("status-canceled");
+        } else if (currentDate.isAfter(endDate)) {
+            taskStatusLabel.setText("🕑 Date Expired");
+            taskStatusLabel.getStyleClass().add("status-expired");
         }
     }
+    
     
     
 
@@ -482,7 +505,7 @@ private void handleTaskClick(MouseEvent event) {
             tagLabel.getStyleClass().add("tags-pane-label");
             HBox tagPane = new HBox();
             tagPane.getStyleClass().add("tags-pane-label-back");
-            Label colorLabel = new Label("@");
+            Label colorLabel = new Label("❙");
             colorLabel.setStyle("-fx-text-fill: " + ColorUtils.convertDbColorToCss(Tags.getTagColor(tag) + ";"));
             tagPane.getChildren().addAll(colorLabel, tagLabel);
             tagsPane.getChildren().add(tagPane);
@@ -545,14 +568,7 @@ private void handleTaskClick(MouseEvent event) {
 
     public void loadProjectsForUser(String username) {
         List<ProjectDetails> projects = Project.getProjectsForUser(username);
-
-        projectsVBox.getChildren().clear();
         myProjectsVBox.getChildren().clear();
-
-        Label createNewLabel = new Label("+ Create New");
-        createNewLabel.getStyleClass().add("project-label");
-        createNewLabel.setOnMouseClicked(event -> setViewVisibility(createProjectViewVBox));
-        projectsVBox.getChildren().add(createNewLabel);
 
         for (ProjectDetails project : projects) {
             int projectId = project.getProjectId();
@@ -568,13 +584,45 @@ private void handleTaskClick(MouseEvent event) {
             projMarkerPane.getChildren().add(projMarker);
             projMarkerPane.getChildren().add(projectLabel);
 
-            projectsVBox.getChildren().add(projMarkerPane);
+            myProjectsVBox.getChildren().add(projMarkerPane);
+        }
+    }
 
-            Label projectLabel2 = new Label(projectName);
-            projectLabel2.setStyle("-fx-text-fill: " + projectColor + ";");
-            projectLabel2.getStyleClass().add("home-label");
-            projectLabel2.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
-            myProjectsVBox.getChildren().add(projectLabel2);
+    public void loadProjectGroupsForUser(String username) {
+        List<String> projectGroups = Project.getUserProjectGroups(username);
+    
+        projectsVBox.getChildren().clear();
+
+        Label createNewLabel = new Label("+ Create New");
+        createNewLabel.getStyleClass().add("menu-label3");
+        createNewLabel.setOnMouseClicked(event -> setViewVisibility(createProjectViewVBox));
+        projectsVBox.getChildren().add(createNewLabel);
+    
+        for (String group : projectGroups) {
+            VBox groupVBox = new VBox();
+            groupVBox.getStyleClass().add("menu-box");
+    
+            Label groupLabel = new Label(group);
+            groupLabel.getStyleClass().add("menu-label2");
+            groupVBox.getChildren().add(groupLabel);
+    
+            List<ProjectDetails> projects = Project.getProjectsForUserByGroup(username, group);
+    
+            for (ProjectDetails project : projects) {
+                int projectId = project.getProjectId();
+                String projectName = project.getProjectName();
+                String projectColor = ColorUtils.convertDbColorToCss(project.getProjectColor());
+                Label projectLabel = new Label(projectName);
+                HBox projMarkerPane = new HBox();
+                Label projMarker = new Label("⚫");
+                projMarker.setStyle("-fx-text-fill: " + projectColor + ";");
+                projectLabel.getStyleClass().add("menu-label3");
+                projectLabel.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
+                projMarkerPane.getChildren().addAll(projMarker, projectLabel);
+                groupVBox.getChildren().add(projMarkerPane);
+            }
+    
+            projectsVBox.getChildren().add(groupVBox);
         }
     }
 
@@ -828,7 +876,8 @@ private void handleTaskClick(MouseEvent event) {
                                     System.out.println("Received notification on " + channelName + ": " + payload);
                                     
                                     Platform.runLater(() -> {
-                                        loadProjectsForUser(username);
+                                        //loadProjectsForUser(username);
+                                        loadProjectGroupsForUser(username);
                                         loadTaskGroupsForProject(currentProjectId);
                                         loadProjectOverview(currentProjectId);
                                     });

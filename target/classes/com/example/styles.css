@@ -13,43 +13,65 @@
     -fx-text-fill: red;
 }
 
+
 /* Menu styles */
-.menu-panel {
-    -fx-background-color: #2c3e50;
-    -fx-padding: 10;
+.menu-container {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 0;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
 }
 
-.menu-panel .label {
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
+.menu-container2 {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 10 10 10 10;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 0;
+    -fx-alignment: center-left;
 }
 
-.project-label {
-    -fx-cursor: hand;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
+.menu-container3 {
+    -fx-background-color: #fffefe;
+    -fx-padding: 10 15 10 15;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
 }
 
-.titled-pane {
-    -fx-background-color: #2c3e50;
-    -fx-border-color: #2c3e50;
-    -fx-border-width: 2;
-}
-
-.titled-pane > .title {
-    -fx-background-color: #394f65;
-    -fx-text-fill: white;
+.menu-icon {
+    -fx-font-size: 23px;
     -fx-font-weight: bold;
+    -fx-text-fill: #333;
 }
 
-.titled-pane > .title > .text {
-    -fx-fill: white;  /* Ensures the text color is applied */
+.menu-label1 {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-alignment: center-left;
 }
 
-.titled-pane > .content {
-    -fx-padding: 10;
-    -fx-background-color: #394f65;
-    -fx-border-color: #2c3e50;
+.menu-label2 {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.menu-label3 {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #606060;
+    -fx-cursor: hand;
+}
+
+.menu-box {
+    -fx-spacing: 5;
+}
+
+.menu-hbox {
+    -fx-spacing: 2;
+    -fx-alignment: center-left;
 }
 
 /* Right panel styles */
@@ -88,7 +110,7 @@
 
 /* ScrollPane's Viewport */
 .scroll-pane .viewport {
-    -fx-background-image: url(mountain.jpg);
+    -fx-background-color: rgb(231, 229, 229);
     -fx-background-size: cover;
 }
 
@@ -102,14 +124,14 @@
     -fx-background-color: #e2e2e2;
     -fx-border-color: #bdc3c7;
     -fx-pref-width: 300;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
 }
 
 .task-group-title {
     -fx-background-color: #ffffff;
-    -fx-border-radius: 0 5 0 0;
-    -fx-background-radius: 0 5 0 0;
+    -fx-border-radius: 3 3 0 0;
+    -fx-background-radius: 3 3 0 0;
     -fx-pref-width: 300;
     -fx-padding: 10;
     -fx-font-size: 18px;
@@ -120,7 +142,7 @@
 .task-group-tasklist {
     -fx-spacing: 10;
     -fx-alignment: center;
-    -fx-padding: 10;
+    -fx-padding: 10 3 10 3;
 }
 
 .add-task-label {
@@ -135,8 +157,8 @@
     -fx-border-color: #bdc3c7;
     -fx-padding: 10 5 5 5;
     -fx-spacing: 5;
-    -fx-border-radius: 0 5 5 0;
-    -fx-background-radius: 0 5 5 0;
+    -fx-border-radius: 0 3 3 0;
+    -fx-background-radius: 0 3 3 0;
     -fx-pref-height: 50;
     -fx-cursor: hand;
 }
@@ -144,7 +166,8 @@
 .task-label {
     -fx-text-fill: white;
     -fx-cursor: hand;
-    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
     -fx-text-fill: #34495e;
 }
 
@@ -165,27 +188,32 @@
     -fx-padding: 5;
 }
 
-.task-dates {
+.date-label {
     -fx-fill-width: true;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    /*-fx-font-weight: bold; */
+    -fx-font-size: 14px;
+    -fx-text-fill: #34495e;
 }
 
 .colored-container {
-    -fx-padding: 0 0 0 7;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+    -fx-padding: 0 0 0 5;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
 }
 
 .colored-container2 {
-    -fx-padding: 0 0 0 7;
-    -fx-border-radius: 5 5 0 0;
-    -fx-background-radius: 5 5 0 0;
+    -fx-padding: 0 0 4 0;
+    -fx-border-radius: 3 3 0 0;
+    -fx-background-radius: 3 3 0 0;
 }
 
 .tags-pane {
     -fx-spacing: 20;
     -fx-hgap: 5;
     -fx-vgap: 5;
-    -fx-background-color: rgb(232, 231, 231);
+    -fx-background-color: rgb(246, 246, 246);
     -fx-border-color: #bdc3c7;
     -fx-border-width: 1;
     -fx-border-radius: 5;
@@ -195,7 +223,7 @@
 
 .tags-pane-label-back {
     /*-fx-background-color: rgb(255, 36, 36); */
-    -fx-padding: 3;
+    -fx-padding: 0;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
 }
@@ -402,4 +430,44 @@
 
 .right-panel-button:hover {
     -fx-background-color: #45a049;
+}
+
+/* CSS для статусов задач */
+.status-done {
+    -fx-text-fill: rgb(255, 255, 255);
+    -fx-font-weight: bold;
+    -fx-background-color: green;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-on-confirmation {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-color: yellow;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-canceled {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: rgb(151, 22, 22);
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-expired {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: red;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-not-done {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
 }

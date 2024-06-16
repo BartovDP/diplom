@@ -203,4 +203,62 @@ public class Project {
 
         return projectId;
     }
+
+    public static List<String> getUserProjectGroups(String username) {
+        String query = "SELECT DISTINCT p.proj_group " +
+                       "FROM projects p " +
+                       "JOIN pu_connector pc ON p.proj_id = pc.proj_id " +
+                       "JOIN userlist u ON pc.user_id = u.user_id " +
+                       "WHERE u.user_name = ?";
+        List<String> projectGroups = new ArrayList<>();
+    
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+    
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+    
+            while (resultSet.next()) {
+                projectGroups.add(resultSet.getString("proj_group"));
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return projectGroups;
+    }
+
+    public static List<ProjectDetails> getProjectsForUserByGroup(String username, String group) {
+        String query = "SELECT p.proj_id, p.proj_name, p.proj_desc, p.proj_template, p.proj_group, p.proj_color " +
+                       "FROM projects p " +
+                       "JOIN pu_connector pc ON p.proj_id = pc.proj_id " +
+                       "JOIN userlist u ON pc.user_id = u.user_id " +
+                       "WHERE u.user_name = ? AND p.proj_group = ?";
+        List<ProjectDetails> projects = new ArrayList<>();
+    
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+    
+            statement.setString(1, username);
+            statement.setString(2, group);
+            ResultSet resultSet = statement.executeQuery();
+    
+            while (resultSet.next()) {
+                int projectId = resultSet.getInt("proj_id");
+                String projectName = resultSet.getString("proj_name");
+                String projectDescription = resultSet.getString("proj_desc");
+                String projectTemplate = resultSet.getString("proj_template");
+                String projectGroup = resultSet.getString("proj_group");
+                String projectColor = resultSet.getString("proj_color");
+    
+                projects.add(new ProjectDetails(projectId, projectName, projectDescription, projectTemplate, projectGroup, projectColor));
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return projects;
+    }
 }

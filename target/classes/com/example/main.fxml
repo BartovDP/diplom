@@ -25,21 +25,41 @@
 <?import javafx.scene.control.TableColumn?>
 
 <HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@styles.css">
-    <!-- Left Panel (Menu) -->
-    <VBox fx:id="menuVBox" minWidth="250" prefWidth="250" spacing="10" styleClass="menu-panel">
-        <padding>
-            <Insets bottom="10" left="10" right="10" top="10" />
-        </padding>
-        <children>
-            <Label text="User Profile" />
-            <Label text="My Tasks" />
-            <Label text="Home" onMouseClicked="#handleHomeClick" />
-            <TitledPane text="Projects" expanded="false" styleClass="titled-pane">
-                <content>
-                    <VBox fx:id="projectsVBox" spacing="5" />
-                </content>
-            </TitledPane>
-        </children>
+    <VBox fx:id="menuVBox" minWidth="250" prefWidth="250" styleClass="menu-container">
+            <!-- Username Section -->
+            <VBox spacing="5" styleClass="menu-container2">
+                <HBox spacing="5" styleClass="menu-hbox">
+                    <Label text="👤" styleClass="menu-icon"/>
+                    <Label fx:id="usernameLabel" styleClass="menu-label1"/>
+                </HBox>
+                <Label text="Change user" onMouseClicked="#handleChangeUserClick" styleClass="menu-label3"/>
+            </VBox>
+            
+            <!-- Home Section -->
+            <VBox spacing="5" styleClass="menu-container2">
+                <HBox spacing="5" styleClass="menu-hbox">
+                    <Label text="🏠" styleClass="menu-icon"/>
+                    <Label text="Home" onMouseClicked="#handleHomeClick" styleClass="menu-label1"/>
+                </HBox>
+            </VBox>
+
+            <!-- My Tasks Section -->
+            <VBox styleClass="menu-container2">
+                <HBox spacing="5" styleClass="menu-hbox">
+                    <Label text="📝" styleClass="menu-icon"/>
+                    <Label text="My Tasks" styleClass="menu-label1"/>
+                </HBox>
+                <VBox fx:id="userTasksVBox" styleClass="menu-box"/>
+            </VBox>
+            
+            <!-- Projects Section -->
+            <VBox styleClass="menu-container2">
+                <HBox styleClass="menu-hbox">
+                    <Label text="📓" styleClass="menu-icon"/>
+                    <Label text="Projects" styleClass="menu-label1"/>
+                </HBox>
+                <VBox fx:id="projectsVBox" spacing="5" styleClass="menu-container3"/>
+            </VBox>
     </VBox>
 
     <VBox fx:id="centerPanelVBox" HBox.hgrow="ALWAYS" styleClass="center-padding">
