@@ -397,6 +397,11 @@ private void handleTaskClick(MouseEvent event) {
         closeRightPanel();
     }
 
+    @FXML
+    private void handleCancelProject() {
+        setViewVisibility(homeViewVBox);
+    }
+
     private void showRightPanel(String type) {
         boolean isVisible = rightPanelVBox.isVisible();
         if (!isVisible) {

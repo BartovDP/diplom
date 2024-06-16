@@ -261,4 +261,25 @@ public class Project {
     
         return projects;
     }
+
+    public static int getTaskCountForProject(int projectId) {
+        String query = "SELECT COUNT(*) AS task_count FROM tasklist WHERE proj_id = ?";
+        int taskCount = 0;
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, projectId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                taskCount = resultSet.getInt("task_count");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return taskCount;
+    }
 }

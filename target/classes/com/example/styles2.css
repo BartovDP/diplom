@@ -3,7 +3,7 @@
     -fx-font-family: 'Arial';
 }
 
-/* Login styles */
+/* ВХОД/РЕГИСТРАЦИЯ */
 .login-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
@@ -13,176 +13,68 @@
     -fx-text-fill: red;
 }
 
-/* Menu styles */
-.menu-panel {
-    -fx-background-color: #2c3e50;
-    -fx-padding: 10;
+
+/* СТИЛИ МЕНЮ */
+.menu-container {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 0;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
 }
 
-.menu-panel .label {
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
+.menu-container2 {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 10 10 10 10;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 0;
+    -fx-alignment: center-left;
 }
 
-.project-label {
-    -fx-cursor: hand;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
+.menu-container3 {
+    -fx-background-color: #fffefe;
+    -fx-padding: 10 15 10 15;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
 }
 
-.titled-pane {
-    -fx-background-color: #2c3e50;
-    -fx-border-color: #2c3e50;
-    -fx-border-width: 2;
-}
-
-.titled-pane > .title {
-    -fx-background-color: #394f65;
-    -fx-text-fill: white;
+.menu-icon {
+    -fx-font-size: 23px;
     -fx-font-weight: bold;
+    -fx-text-fill: #333;
 }
 
-.titled-pane > .title > .text {
-    -fx-fill: white;  /* Ensures the text color is applied */
-}
-
-.titled-pane > .content {
-    -fx-padding: 10;
-    -fx-background-color: #394f65;
-    -fx-border-color: #2c3e50;
-}
-
-/* Right panel styles */
-.right-panel {
-    -fx-background-color: #2c3e50;
-    -fx-padding: 10;
-}
-
-.right-panel-label {
-    -fx-font-size: 12px;
-    -fx-text-fill: white;
-    -fx-min-width: 110;
-    -fx-alignment: center-right;
-}
-
-
-.right-panel-title {
+.menu-label1 {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-alignment: center-left;
 }
 
-.right-panel-flow {
-    -fx-background-color: #f3f4f5;
-    -fx-border-color: #dfe0e1;
-    -fx-border-width: 1;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-padding: 5;
-}
-
-
-/* Project Board styles */
-.board-scroll-pane {
-
-}
-
-/* ScrollPane's Viewport */
-.scroll-pane .viewport {
-    -fx-background-image: url(stars.jpg);
-    -fx-background-size: cover;
-}
-
-.project-title {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-padding: 10 0 10 10;
-}
-
-.task-group {
-    -fx-background-color: #e2e2e2;
-    -fx-pref-width: 300;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-}
-
-.task-group-title {
-    -fx-background-color: #ba3a3a;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-pref-width: 300;
-    -fx-padding: 10;
+.menu-label2 {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #333;
 }
 
-.task-group-tasklist {
-    -fx-spacing: 10;
-    -fx-alignment: center;
-    -fx-padding: 10;
-}
-
-.add-task-label {
-    -fx-cursor: hand;
-    -fx-font-size: 13px;
-    -fx-text-fill: #436587;
-    -fx-alignment: center;
-}
-
-.task-box {
-    -fx-background-color: #ffffff;
-    -fx-padding: 10 5 5 5;
-    -fx-spacing: 5;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-cursor: hand;
-}
-
-.task-label {
-    -fx-text-fill: white;
-    -fx-cursor: hand;
+.menu-label3 {
     -fx-font-size: 14px;
-    -fx-text-fill: #34495e;
+    -fx-font-weight: bold;
+    -fx-text-fill: #606060;
+    -fx-cursor: hand;
 }
 
-.tags-pane {
-    -fx-spacing: 20;
-    -fx-hgap: 5;
-    -fx-vgap: 5;
-    -fx-background-color: rgb(232, 231, 231);
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 1;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-padding: 5;
+.menu-box {
+    -fx-spacing: 5;
 }
 
-.tags-pane-label-back {
-    -fx-background-color: rgb(118, 208, 63);
-    -fx-padding: 3;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+.menu-hbox {
+    -fx-spacing: 2;
+    -fx-alignment: center-left;
 }
 
-.tags-pane-label {
-    -fx-text-fill: #34495e;
-}
-
-/* Center Panel (Project Board) */
-.center-panel {
-    -fx-background-color: #a0a4a7;
-    /*-fx-background-image: url(mountain.jpg); */
-    -fx-background-size: cover;
-}
-
-.center-padding {
-    -fx-background-color: #a0a4a7;
-    -fx-background-image: url(stars.jpg);
-    -fx-background-size: cover;
-    -fx-padding: 75;
-}
-
-/* Home View styles */
+/* ВКЛАДКА HOME */
 .home-view {
     -fx-background-color: rgba(255, 255, 255, 0.75);
     -fx-padding: 50;
@@ -218,20 +110,328 @@
     -fx-text-fill: #34495e;
 }
 
-.clickable-label {
-    -fx-cursor: hand;
-    -fx-text-fill: #2980b9;
-    -fx-font-size: 16px;
-}
-
-#homeViewVBox {
-    -fx-alignment: top-center;
-    -fx-spacing: 20;
-    -fx-padding: 20;
-}
-
 .tab-pane {
     -fx-background-color: #2c3e50;
-    -fx-background-image: url(stars.jpg);
+    -fx-background-image: url(mountain.jpg);
     -fx-background-size: cover;
+}
+
+
+.calendar-task {
+    -fx-background-color: #ff0000;
+    -fx-fill: #ff0000;
+}
+
+/* ВКЛАДКА СОЗДАНИЯ ПРОЕКТА */
+
+
+/* ЦЕНТРАЛЬНАЯ ПАНЕЛЬ */
+
+/* НАСТРОЙКА TABS PANE */
+
+/* ScrollPane's Viewport */
+.scroll-pane .viewport {
+    -fx-background-color: rgb(231, 229, 229);
+    -fx-background-size: cover;
+}
+
+
+/* НАСТРОЙКА ПАНЕЛИ ДОСОК */
+.project-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 10 10;
+}
+
+.task-group {
+    -fx-background-color: #e2e2e2;
+    -fx-border-color: #bdc3c7;
+    -fx-pref-width: 300;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.task-group-title {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 3 3 0 0;
+    -fx-background-radius: 3 3 0 0;
+    -fx-pref-width: 300;
+    -fx-padding: 10;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #242424;
+}
+
+.task-group-tasklist {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-padding: 10 3 10 3;
+}
+
+.add-task-label {
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-text-fill: #436587;
+    -fx-alignment: center;
+}
+
+/* Таски */
+.task-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #bdc3c7;
+    -fx-padding: 10 5 5 5;
+    -fx-spacing: 5;
+    -fx-border-radius: 0 3 3 0;
+    -fx-background-radius: 0 3 3 0;
+    -fx-pref-height: 50;
+    -fx-cursor: hand;
+}
+
+.task-label {
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #34495e;
+}
+
+.task-status {
+    -fx-text-fill: rgb(255, 255, 255);
+    -fx-background-color: rgb(130, 44, 44);
+}
+
+.task-content {
+    -fx-spacing: 5;
+    -fx-hgap: 5;
+    -fx-vgap: 5;
+    -fx-background-color: rgb(232, 231, 231);
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+.date-label {
+    -fx-fill-width: true;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-text-fill: #34495e;
+}
+
+.colored-container {
+    -fx-padding: 0 0 0 5;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.colored-container2 {
+    -fx-padding: 0 0 4 0;
+    -fx-border-radius: 3 3 0 0;
+    -fx-background-radius: 3 3 0 0;
+}
+
+/* теги */
+.tags-pane {
+    -fx-spacing: 20;
+    -fx-hgap: 5;
+    -fx-vgap: 5;
+    -fx-background-color: rgb(246, 246, 246);
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+.tags-pane-label-back {
+    -fx-padding: 0;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.tags-pane-label {
+    -fx-text-fill: #34495e;
+}
+
+/* Center Panel (Project Board) */
+.center-panel {
+    -fx-background-color: #a0a4a7;
+    -fx-background-size: cover;
+}
+
+.center-padding {
+    -fx-background-color: #a0a4a7;
+    -fx-background-image: url(mountain.jpg);
+    -fx-background-size: cover;
+    -fx-padding: 75;
+}
+
+/* НАСТРОЙКА ВКЛАДКИ СПИСКОВ */
+.modern-table {
+    -fx-table-cell-border-color: #dcdcdc;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+}
+
+.modern-table .column-header-background {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.modern-table .table-row-cell {
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 0 0 1 0; /* Only bottom border for rows */
+    -fx-font-size: 12px;
+    -fx-padding: 5;
+}
+
+.modern-table .column-header, .modern-table .filler {
+    -fx-background-color: #f0f0f0;
+}
+
+.modern-table .table-cell {
+    -fx-padding: 5;
+    -fx-font-size: 12px;
+    -fx-text-fill: #333;
+}
+
+.modern-table .column-header .label {
+    -fx-text-fill: #333;
+}
+
+
+/* СТИЛИ ВКЛАДКИ ПРОСМОТРА ПРОЕКТА */
+.overview-container {
+    -fx-padding: 20;
+    -fx-background-color: #f4f4f4;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.overview-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding-bottom: 10;
+}
+
+.overview-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+    -fx-padding-top: 10;
+}
+
+.overview-value {
+    -fx-font-size: 16px;
+    -fx-text-fill: #333;
+    -fx-padding-bottom: 10;
+}
+
+.overview-section {
+    -fx-padding: 10 0 10 0;
+}
+
+.overview-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.overview-button:hover {
+    -fx-background-color: #45a049;
+}
+
+/* СТИЛИ ПРАВОЙ ПАНЕЛИ */
+.right-panel {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 20;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.right-panel-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding-bottom: 10;
+}
+
+.right-panel-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+    -fx-padding-top: 10;
+}
+
+.right-panel-input {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+    -fx-padding-bottom: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.right-panel-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.right-panel-button:hover {
+    -fx-background-color: #45a049;
+}
+
+/* CSS для статусов задач */
+.status-done {
+    -fx-text-fill: rgb(255, 255, 255);
+    -fx-font-weight: bold;
+    -fx-background-color: green;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-on-confirmation {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-color: yellow;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-canceled {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: rgb(151, 22, 22);
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-expired {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: red;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
+}
+
+.status-not-done {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5; /* Скругление */
+    -fx-padding: 2 5 2 5; /* Внутренние отступы */
 }
