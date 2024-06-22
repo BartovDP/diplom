@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.geometry.Pos?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.RegisterController" prefWidth="1280" prefHeight="720">
-    <VBox alignment="CENTER" spacing="20" prefWidth="600" prefHeight="400">
-        <Label text="Account creation" style="-fx-font-size: 24px;"/>
+<StackPane prefHeight="720" prefWidth="1280" styleClass="panel-image1" stylesheets="@styles.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="com.example.RegisterController">
+    <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400" prefWidth="600" spacing="20" styleClass="panel-transparent" StackPane.alignment="CENTER">
+        <Label styleClass="login-title" text="Account creation" />
         
         <GridPane alignment="CENTER" hgap="10" vgap="10">
             <padding>
-                <Insets top="25" right="25" bottom="25" left="25"/>
+                <Insets bottom="25" left="25" right="25" top="25" />
             </padding>
             
-            <Label text="Username:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-            <TextField fx:id="usernameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Label styleClass="main-label" text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="usernameField" styleClass="panel-input" prefHeight="23.0" prefWidth="230.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             
-            <Label text="Password:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Label styleClass="main-label" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <PasswordField fx:id="passwordField" styleClass="panel-input" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             
-            <Label text="Confirm Password:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <PasswordField fx:id="confirmPasswordField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <Label styleClass="main-label" text="Confirm Password:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <PasswordField fx:id="confirmPasswordField" styleClass="panel-input" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
         </GridPane>
         
-        <Label fx:id="errorMessage" text="" style="-fx-text-fill: red;"/>
+        <Label fx:id="errorMessage" style="-fx-text-fill: red;" styleClass="error-message" text="" />
         
-        <Button text="Register" onAction="#handleRegisterButtonAction"/>
+        <Button onAction="#handleRegisterButtonAction" prefHeight="37.0" prefWidth="137.0" styleClass="button-blue" text="Register" />
         
-        <Label text="I already have an account" style="-fx-font-size: 14px;" onMouseClicked="#handleAlreadyHaveAccountClick"/>
+        <Label onMouseClicked="#handleAlreadyHaveAccountClick" styleClass="main-label-interact" stylesheets="@styles.css" text="I already have an account" />
     </VBox>
 </StackPane>

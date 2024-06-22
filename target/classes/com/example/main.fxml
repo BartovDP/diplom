@@ -20,12 +20,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.GridPane?>
-<?import com.calendarfx.view.CalendarView?>
+<!-- --><?import com.calendarfx.view.CalendarView?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ProgressBar?>
 
 <HBox prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MainController" stylesheets="@styles.css">
-    <VBox fx:id="menuVBox" minWidth="250" prefWidth="250" styleClass="menu-container">
+    <VBox fx:id="menuVBox" minWidth="250" prefWidth="300" styleClass="menu-container">
             <!-- Username Section -->
             <VBox spacing="5" styleClass="menu-container2">
                 <HBox spacing="5" styleClass="menu-hbox">
@@ -58,7 +59,7 @@
                     <Label text="📓" styleClass="menu-icon"/>
                     <Label text="Projects" styleClass="menu-label1"/>
                 </HBox>
-                <VBox fx:id="projectsVBox" spacing="5" styleClass="menu-container3"/>
+                <VBox fx:id="projectsVBox" styleClass="menu-container3"/>
             </VBox>
     </VBox>
 
@@ -73,8 +74,8 @@
                         <Label text="• Create new project" onMouseClicked="#handleCreateProjectClick" styleClass="home-label" />
                         <HBox spacing="5">
                             <Label text="• Join existing:" styleClass="home-label" />
-                            <TextField fx:id="projectKeyField" promptText="Enter project key" />
-                            <Button text="Join" onAction="#handleJoinProject" />
+                            <TextField fx:id="projectKeyField" promptText="Enter project key" styleClass="panel-input"/>
+                            <Button text="Join" onAction="#handleJoinProject" styleClass="button-blue2"/>
                         </HBox>
                     </HBox>
                 </VBox>
@@ -113,18 +114,22 @@
                 <Tab text="Calendar">
                     <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
                         <!-- CalendarFX CalendarView -->
-                        <CalendarView fx:id="calendarView" VBox.vgrow="ALWAYS"/>
+                        <!-- --><CalendarView fx:id="calendarView" VBox.vgrow="ALWAYS"/>
                     </VBox>
                 </Tab>
                 <Tab text="Overview">
-                    <ScrollPane fitToHeight="true" VBox.vgrow="ALWAYS">
+                    <ScrollPane fitToHeight="true" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
                         <content>
-                            <VBox fx:id="overviewVBox" styleClass="overview-container" spacing="10">
+                            <VBox fx:id="overviewVBox" styleClass="overview-container" spacing="10" HBox.hgrow="ALWAYS">
                                 <Label text="Project Overview" styleClass="overview-title" />
                                 
                                 <VBox styleClass="overview-section">
                                     <Label text="Name:" styleClass="overview-label" />
                                     <Label fx:id="projectNameLabel" styleClass="overview-value" />
+                                </VBox>
+                                <VBox styleClass="overview-section">
+                                    <Label fx:id="projectProgressTitle" text="Project Progress:" styleClass="overview-label" />
+                                    <ProgressBar fx:id="projectProgressBar" styleClass="overview-progress-bar" />
                                 </VBox>
                                 
                                 <VBox styleClass="overview-section">
@@ -145,14 +150,13 @@
                                 <VBox styleClass="overview-section">
                                     <Label text="Invite users with project key:" styleClass="overview-label" />
                                     <Label fx:id="projectKeyLabel" onMouseClicked="#handleCopyProjectKey" styleClass="clickable-label overview-value" />
-                                </VBox>
-                                
-                                <Button text="Delete Project" onAction="#handleDeleteProject" styleClass="overview-button" />
+                                </VBox>                          
+                                <Button text="Delete Project" onAction="#handleDeleteProject" styleClass="button-red" />
                             </VBox>
                         </content>
                     </ScrollPane>
                 </Tab>
-                <Tab text="Task List">
+                <Tab text="Backlog">
                     <VBox fx:id="taskListVBox" VBox.vgrow="ALWAYS">
                         <TableView fx:id="taskTableView" VBox.vgrow="ALWAYS" styleClass="modern-table">
                             <columns>
@@ -169,27 +173,27 @@
         </VBox>
 
         <!-- Create Project View -->
-        <VBox fx:id="createProjectViewVBox" HBox.hgrow="ALWAYS" styleClass="create-project-panel" visible="false" managed="false">
-            <Label text="Create Project" styleClass="create-project-title" />
-            <GridPane hgap="10" vgap="10">
+        <VBox fx:id="createProjectViewVBox" HBox.hgrow="ALWAYS" spacing="20" styleClass="panel-transparent" visible="false" managed="false">
+            <Label text="Create Project" styleClass="create-project-title" alignment="CENTER"/>
+            <GridPane hgap="10" vgap="10" alignment="CENTER">
                 <Label text="Project Name" styleClass="create-project-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="newProjectNameField" prefWidth="300" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="create-project-input"/>
+                <TextField fx:id="newProjectNameField" prefWidth="350" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="panel-input"/>
                 
                 <Label text="Project Description" styleClass="create-project-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextArea fx:id="newProjectDescriptionArea" prefWidth="300" prefHeight="150" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="create-project-input"/>
-                
-                <Label text="Project Template" styleClass="create-project-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <ComboBox fx:id="projectTemplateComboBox" promptText="Select Template" prefWidth="300" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="create-project-input"/>
+                <TextArea fx:id="newProjectDescriptionArea" wrapText="true" prefWidth="350" prefHeight="150" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="panel-input"/>
                 
                 <Label text="Group" styleClass="create-project-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="projectGroupField" prefWidth="300" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="create-project-input"/>
+                <TextField fx:id="projectGroupField" prefWidth="350" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="panel-input"/>
+                
+                <Label text="Project Template" styleClass="create-project-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="projectTemplateComboBox" promptText="Select Template" prefWidth="300" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="panel-input"/>
                 
                 <Label text="Color" styleClass="create-project-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <ColorPicker fx:id="projectColorPicker" prefWidth="300" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="create-project-input"/>
+                <ColorPicker fx:id="projectColorPicker" prefWidth="300" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="panel-input"/>
             </GridPane>
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button text="Create Project" onAction="#handleCreateProject" styleClass="create-project-button"/>
-                <Button text="Cancel" onAction="#handleCancel" styleClass="create-project-button"/>
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Create Project" onAction="#handleCreateProject" prefWidth="150" styleClass="button-blue"/>
+                <Button text="Cancel" onAction="#handleCancelProject" prefWidth="100" styleClass="button-red"/>
             </HBox>
         </VBox>
     </VBox>
@@ -210,7 +214,7 @@
                 <Button text="Cancel" onAction="#handleCancel"/>
             </VBox>
             <!-- Create Task Section -->
-            <VBox fx:id="taskCreateVBox" spacing="15" visible="false" managed="false" styleClass="right-panel">
+            <VBox fx:id="taskCreateVBox" spacing="15" visible="false" managed="false">
                 <Label text="Task Create" styleClass="right-panel-title" />
                 <GridPane hgap="10" vgap="10">
                     <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
@@ -233,8 +237,8 @@
                     <FlowPane fx:id="taskTagsPane" orientation="HORIZONTAL" prefWidth="200" hgap="5" vgap="7" styleClass="right-panel-flow" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
                     <ComboBox fx:id="availableTagsComboBox" promptText="Add Tag" onAction="#handleTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Button text="Create Task" onAction="#handleCreateTask" styleClass="right-panel-button"/>
-                <Button text="Cancel" onAction="#handleCancel" styleClass="right-panel-button"/>
+                <Button text="Create Task" onAction="#handleCreateTask" styleClass="button-blue"/>
+                <Button text="Cancel" onAction="#handleCancel" styleClass="button-grey"/>
             </VBox>
 
             <!-- Edit Task Section -->
@@ -258,12 +262,12 @@
                     <Label text="Responsible for the Task" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <ComboBox fx:id="editResponsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                     <Label text="Tags" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="right-panel-flow"/>
+                    <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" prefWidth="200" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="right-panel-flow"/>
                     <ComboBox fx:id="editAvailableTagsComboBox" promptText="Add Tag" onAction="#handleEditTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Button text="Save Changes" onAction="#handleEditTask" styleClass="right-panel-button"/>
-                <Button text="Delete Task" onAction="#handleDeleteTask" styleClass="right-panel-button"/>
-                <Button text="Cancel" onAction="#handleCancel" styleClass="right-panel-button"/>
+                <Button text="Save Changes" onAction="#handleEditTask" prefWidth="100" styleClass="button-blue"/>
+                <Button text="Delete Task" onAction="#handleDeleteTask" prefWidth="100" styleClass="button-red"/>
+                <Button text="Cancel" onAction="#handleCancel" prefWidth="100" styleClass="button-grey"/>
             </VBox>
         </children>
     </VBox>

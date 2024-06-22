@@ -32,12 +32,16 @@ import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import com.calendarfx.view.CalendarView;
+import com.example.DAO.GroupDAO;
+//import com.example.DAO.Groups;
+//import com.example.DAO.Project;
+import com.example.DAO.ProjectDAO;
+import com.example.DAO.TagDAO;
+//import com.example.DAO.Tags;
+//import com.example.DAO.Task;
+import com.example.DAO.TaskDAO;
 import com.example.Entities.GroupDetails;
-import com.example.Entities.Groups;
-import com.example.Entities.Project;
 import com.example.Entities.ProjectDetails;
-import com.example.Entities.Tags;
-import com.example.Entities.Task;
 import com.example.Entities.TaskDetails;
 
 public class MainController {
@@ -147,6 +151,10 @@ public class MainController {
     private Label usernameLabel;
     @FXML
     private VBox userTasksVBox;
+    @FXML
+    private ProgressBar projectProgressBar;
+    @FXML
+    private Label projectProgressTitle;
 
     private Calendar taskCalendar;
     private VBox currentEditTaskBox;
@@ -159,8 +167,17 @@ public class MainController {
     private static String username; // Имя пользователя, взятое из интерфейса входа
     private Set<String> currentTaskTags; // Теги текущей задачи
 
+    private ProjectDAO projectdao;
+    private GroupDAO groupdao;
+    private TagDAO tagdao;
+    private TaskDAO taskdao;
+
     @FXML
     private void initialize() {
+        projectdao = DatabaseManager.getProjectDAO();
+        groupdao = DatabaseManager.getGroupDAO();
+        tagdao = DatabaseManager.getTagDAO();
+        taskdao = DatabaseManager.getTaskDAO();
 
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("taskName"));
         taskDescColumn.setCellValueFactory(new PropertyValueFactory<>("taskDescription"));
@@ -174,7 +191,7 @@ public class MainController {
             }
         });
 
-        projectTemplateComboBox.setItems(FXCollections.observableArrayList("Template One", "Template Two"));
+        projectTemplateComboBox.setItems(FXCollections.observableArrayList("Scrum", "Canban"));
         taskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done", "Canceled"));
         taskStatusChoiceBox.setValue("Planned");
         editTaskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done"));
@@ -243,12 +260,12 @@ private void handleTaskClick(MouseEvent event) {
         String projectColor = projectColorPicker.getValue().toString();
 
         if (projectName != null && !projectName.isEmpty()) {
-            int projectId = Project.createProject(projectName, projectDescription, LoginController.getUserId(), projectTemplate, projectGroup, projectColor);
+            int projectId = projectdao.createProject(projectName, projectDescription, LoginController.getUserId(), projectTemplate, projectGroup, projectColor);
 
-            if ("Template One".equals(projectTemplate)) {
-                Project.addTemplateOne(projectId);
-            } else if ("Template Two".equals(projectTemplate)) {
-                Project.addTemplateTwo(projectId);
+            if ("Scrum".equals(projectTemplate)) {
+                groupdao.addTemplateScrum(projectId);
+            } else if ("Canban".equals(projectTemplate)) {
+                groupdao.addTemplateCanban(projectId);
             }
 
             //loadProjectsForUser(username);
@@ -305,13 +322,13 @@ private void handleTaskClick(MouseEvent event) {
         int userId = LoginController.getUserId(responsible);
 
         if (isEditMode) {
-            Task.updateTask(currentTaskName, taskName, taskDescription, beginningDate, endingDate, taskStatus, taskColor);
+            taskdao.updateTask(currentTaskName, taskName, taskDescription, beginningDate, endingDate, taskStatus, taskColor);
             updateTagsForTask(taskName, tagsPane);
-            Task.updateResponsibleUser(userId, userId);
+            taskdao.updateResponsibleUser(userId, userId);
         } else {
-            int taskId = Task.saveTask(currentProjectId, taskName, taskDescription, beginningDate, endingDate, taskStatus, taskColor);
+            int taskId = taskdao.saveTask(currentProjectId, taskName, taskDescription, beginningDate, endingDate, taskStatus, taskColor);
             saveTagsToTask(tagsPane, taskId);
-            Task.saveResponsibleUser(taskId, userId);
+            taskdao.saveResponsibleUser(taskId, userId);
         }
 
         // Reload task groups for the project to reflect changes in the UI
@@ -326,10 +343,10 @@ private void handleTaskClick(MouseEvent event) {
     private void handleJoinProject() {
         String projectKey = projectKeyField.getText();
         if (projectKey != null && !projectKey.isEmpty()) {
-            int projectId = Project.getProjectIdByKey(projectKey);
+            int projectId = projectdao.getProjectIdByKey(projectKey);
             int userId = LoginController.getUserId();
             if (projectId != -1 && userId != -1) {
-                Project.linkProjectToUser(projectId, userId);
+                projectdao.linkProjectToUser(projectId, userId);
                 loadProjectsForUser(username);
                 projectKeyField.clear();
                 setViewVisibility(homeViewVBox);
@@ -345,7 +362,7 @@ private void handleTaskClick(MouseEvent event) {
 
     @FXML
     private void handleDeleteTask() {
-        Task.deleteTask(currentTaskName);
+        taskdao.deleteTask(currentTaskName);
         projectBoardHBox.getChildren().clear();
         loadTaskGroupsForProject(currentProjectId);
         closeRightPanel();
@@ -386,7 +403,7 @@ private void handleTaskClick(MouseEvent event) {
 
     @FXML
     private void handleDeleteProject() {
-        Project.deleteProject(currentProjectId);
+        projectdao.deleteProject(currentProjectId);
         //loadProjectsForUser(username);
         loadProjectGroupsForUser(username);
         setViewVisibility(homeViewVBox);
@@ -469,7 +486,7 @@ private void handleTaskClick(MouseEvent event) {
         HBox dateContainer = new HBox(dateLabel);
         dateContainer.setAlignment(Pos.CENTER_RIGHT);
 
-        taskBox.getChildren().addAll(taskLabelContainer, tagsPane, dateContainer);
+        taskBox.getChildren().addAll(taskLabelContainer, dateContainer); //tagsPane
 
         VBox coloredContainer = new VBox(taskBox);
         coloredContainer.setStyle("-fx-background-color: " + taskDetails.getTaskColor() + ";");
@@ -511,7 +528,7 @@ private void handleTaskClick(MouseEvent event) {
             HBox tagPane = new HBox();
             tagPane.getStyleClass().add("tags-pane-label-back");
             Label colorLabel = new Label("❙");
-            colorLabel.setStyle("-fx-text-fill: " + ColorUtils.convertDbColorToCss(Tags.getTagColor(tag) + ";"));
+            colorLabel.setStyle("-fx-text-fill: " + ColorUtils.convertDbColorToCss(tagdao.getTagColor(tag) + ";"));
             tagPane.getChildren().addAll(colorLabel, tagLabel);
             tagsPane.getChildren().add(tagPane);
         }
@@ -544,21 +561,21 @@ private void handleTaskClick(MouseEvent event) {
 
     private void saveTagsToTask(FlowPane tagsPane, int taskId) {
         for (String tagName : getTagsFromPane(tagsPane)) {
-            Tags.saveTagToTask(tagName, taskId);
+            tagdao.saveTagToTask(tagName, taskId);
         }
     }
 
     private void updateTagsForTask(String taskName, FlowPane tagsPane) {
-        int taskId = Task.getTaskId(taskName);
+        int taskId = taskdao.getTaskId(taskName);
     
         if (taskId != -1) {
-            Tags.removeAllTagsFromTask(taskId);
+            tagdao.removeAllTagsFromTask(taskId);
             saveTagsToTask(tagsPane, taskId);
         }
     }    
 
     private void fillEditTaskFields(String taskName) {
-        TaskDetails taskDetails = Task.getTaskDetails(taskName);
+        TaskDetails taskDetails = taskdao.getTaskDetails(taskName);
     
         if (taskDetails != null) {
             editTaskNameField.setText(taskDetails.getTaskName());
@@ -572,7 +589,7 @@ private void handleTaskClick(MouseEvent event) {
         
 
     public void loadProjectsForUser(String username) {
-        List<ProjectDetails> projects = Project.getProjectsForUser(username);
+        List<ProjectDetails> projects = projectdao.getProjectsForUser(username);
         myProjectsVBox.getChildren().clear();
 
         for (ProjectDetails project : projects) {
@@ -581,7 +598,7 @@ private void handleTaskClick(MouseEvent event) {
             String projectColor = project.getProjectColor();
 
             Label projectLabel = new Label(projectName);
-            projectLabel.getStyleClass().add("project-label");
+            projectLabel.getStyleClass().add("home-label");
             projectLabel.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
             HBox projMarkerPane = new HBox();
             Label projMarker = new Label("⚫");
@@ -594,11 +611,11 @@ private void handleTaskClick(MouseEvent event) {
     }
 
     public void loadProjectGroupsForUser(String username) {
-        List<String> projectGroups = Project.getUserProjectGroups(username);
+        List<String> projectGroups = projectdao.getUserProjectGroups(username);
     
         projectsVBox.getChildren().clear();
 
-        Label createNewLabel = new Label("+ Create New");
+        Label createNewLabel = new Label("Create new project");
         createNewLabel.getStyleClass().add("menu-label3");
         createNewLabel.setOnMouseClicked(event -> setViewVisibility(createProjectViewVBox));
         projectsVBox.getChildren().add(createNewLabel);
@@ -611,7 +628,7 @@ private void handleTaskClick(MouseEvent event) {
             groupLabel.getStyleClass().add("menu-label2");
             groupVBox.getChildren().add(groupLabel);
     
-            List<ProjectDetails> projects = Project.getProjectsForUserByGroup(username, group);
+            List<ProjectDetails> projects = projectdao.getProjectsForUserByGroup(username, group);
     
             for (ProjectDetails project : projects) {
                 int projectId = project.getProjectId();
@@ -621,7 +638,9 @@ private void handleTaskClick(MouseEvent event) {
                 HBox projMarkerPane = new HBox();
                 Label projMarker = new Label("⚫");
                 projMarker.setStyle("-fx-text-fill: " + projectColor + ";");
+                projMarker.setMinWidth(15);
                 projectLabel.getStyleClass().add("menu-label3");
+                projectLabel.setWrapText(true);
                 projectLabel.setOnMouseClicked(event -> handleProjectClick(projectId, projectName));
                 projMarkerPane.getChildren().addAll(projMarker, projectLabel);
                 groupVBox.getChildren().add(projMarkerPane);
@@ -632,7 +651,7 @@ private void handleTaskClick(MouseEvent event) {
     }
 
     private void loadResponsibleUsers(int projectId) {
-        List<String> users = Project.getUsersWithAccess(projectId);
+        List<String> users = projectdao.getUsersWithAccess(projectId);
         responsibleComboBox.setItems(FXCollections.observableArrayList(users));
         editResponsibleComboBox.setItems(FXCollections.observableArrayList(users));
     }
@@ -663,12 +682,12 @@ private void handleTaskClick(MouseEvent event) {
 
     
     private void loadTasksForCalendar(int projectId) {
-        List<TaskDetails> tasks = Task.getTasksForProject(projectId);
+        List<TaskDetails> tasks = taskdao.getTasksForProject(projectId);
         loadTasksIntoCalendar(tasks);
     }
 
     private void loadTasksForProject(int projectId) {
-        List<TaskDetails> tasks = Task.getTasksForProject(projectId);
+        List<TaskDetails> tasks = taskdao.getTasksForProject(projectId);
         ObservableList<TaskDetails> taskList = FXCollections.observableArrayList(tasks);
         taskTableView.setItems(taskList);
     }
@@ -685,7 +704,7 @@ private void handleTaskClick(MouseEvent event) {
 
     private void loadTasksForUser() {
         int userId = LoginController.getUserId();
-        List<TaskDetails> userTasks = Task.getTasksForUser(userId);
+        List<TaskDetails> userTasks = taskdao.getTasksForUser(userId);
     
         myTasksVBox.getChildren().clear();
     
@@ -703,14 +722,14 @@ private void handleTaskClick(MouseEvent event) {
     }
 
     private void loadTaskGroupsForProject(int projectId) {
-        List<GroupDetails> groups = Groups.getGroupsForProject(projectId);
+        List<GroupDetails> groups = groupdao.getGroupsForProject(projectId);
         projectBoardHBox.getChildren().clear();
     
         for (GroupDetails group : groups) {
             int groupId = group.getGroupId();
             String groupName = group.getGroupName();
             int tagId = group.getTagId();
-            String tagColor = ColorUtils.convertDbColorToCss(Tags.getTagColor(Tags.getTagNameById(tagId)));
+            String tagColor = ColorUtils.convertDbColorToCss(tagdao.getTagColor(tagdao.getTagNameById(tagId)));
     
             VBox taskGroup = new VBox();
             taskGroup.getStyleClass().add("task-group");
@@ -741,16 +760,16 @@ private void handleTaskClick(MouseEvent event) {
      
 
     private void loadTasksForGroup(int projId, int tagId, int groupId, VBox tasksVBox) {
-        List<TaskDetails> tasks = Task.getTasksForGroup(projId, tagId, groupId);
+        List<TaskDetails> tasks = taskdao.getTasksForGroup(projId, tagId, groupId);
         
         for (TaskDetails task : tasks) {
-            List<String> taskTags = Tags.getTagsForTask(Task.getTaskId(task.getTaskName()));
+            List<String> taskTags = tagdao.getTagsForTask(taskdao.getTaskId(task.getTaskName()));
             addTaskToGroup(tasksVBox, task, taskTags);
         }
     }
 
     private void loadProjectOverview(int projectId) {
-        ProjectDetails projectDetails = Project.getProjectDetails(projectId);
+        ProjectDetails projectDetails = projectdao.getProjectDetails(projectId);
     
         if (projectDetails != null) {
             projectNameLabel.setText(projectDetails.getProjectName());
@@ -758,11 +777,18 @@ private void handleTaskClick(MouseEvent event) {
             projectTemplateLabel.setText(projectDetails.getProjectTemplate());
             projectKeyLabel.setText(projectDetails.getShareKey());
     
-            List<String> users = Project.getUsersWithAccess(projectId);
+            List<String> users = projectdao.getUsersWithAccess(projectId);
             userAccessVBox.getChildren().clear();
             for (String user : users) {
                 userAccessVBox.getChildren().add(new Label(user));
             }
+
+            // Calculate progress and set progress bar value
+            int totalTasks = projectdao.getTaskCountForProject(projectId);
+            int completedTasks = projectdao.getCompletedTaskCountForProject(projectId);
+            double progress = totalTasks == 0 ? 0 : (double) completedTasks / totalTasks;
+            projectProgressBar.setProgress(progress);
+            projectProgressTitle.setText("Tasks completed: " + completedTasks + "/" + totalTasks);
         }
     }
         
@@ -775,14 +801,14 @@ private void handleTaskClick(MouseEvent event) {
     }    
 
     private void loadTags() {
-        List<String> tags = Tags.getAllTags();
+        List<String> tags = tagdao.getAllTags();
         availableTagsComboBox.getItems().addAll(tags);
         editAvailableTagsComboBox.getItems().addAll(tags);
     }    
 
     private void loadAvailableTags(ComboBox<String> comboBox) {
         comboBox.getItems().clear();
-        List<String> tags = Tags.getAllTags();
+        List<String> tags = tagdao.getAllTags();
         for (String tagName : tags) {
             if (!currentTaskTags.contains(tagName)) {
                 comboBox.getItems().add(tagName);
@@ -791,7 +817,7 @@ private void handleTaskClick(MouseEvent event) {
     }
 
     private void setTagForCurrentGroup(int tagId) {
-        String tagName = Tags.getTagNameById(tagId);
+        String tagName = tagdao.getTagNameById(tagId);
         if (tagName != null) {
             taskTagsPane.getChildren().clear();
             taskTagsPane.getChildren().add(new Label(tagName));
@@ -814,10 +840,10 @@ private void handleTaskClick(MouseEvent event) {
     private void loadTaskTags(String taskName, FlowPane tagsPane, ComboBox<String> availableTagsComboBox) {
         tagsPane.getChildren().clear();
         currentTaskTags = new HashSet<>();
-        int taskId = Task.getTaskId(taskName);
+        int taskId = taskdao.getTaskId(taskName);
         
         if (taskId != -1) {
-            List<String> tags = Tags.getTagsForTask(taskId);
+            List<String> tags = tagdao.getTagsForTask(taskId);
             for (String tagName : tags) {
                 Label tagLabel = new Label(tagName);
                 tagLabel.setOnMouseClicked(this::handleTagDoubleClick);

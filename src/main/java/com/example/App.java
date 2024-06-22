@@ -17,6 +17,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         App.primaryStage = primaryStage;
+        DatabaseManager.switchDatabase(true);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/login.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root, 1280, 720);

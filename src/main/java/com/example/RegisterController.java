@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.example.DAO.User;
+
 public class RegisterController {
 
     @FXML
@@ -45,7 +47,7 @@ public class RegisterController {
             return;
         }
 
-        if (registerUser(username, password)) {
+        if (User.registerUser(username, password)) {
             errorMessage.setText("User successfully registered.");
         } else {
             errorMessage.setText("Registration failed. Please try again.");
@@ -73,25 +75,6 @@ public class RegisterController {
             if (resultSet.next() && resultSet.getInt(1) > 0) {
                 return true;
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    private boolean registerUser(String username, String password) {
-        String query = "INSERT INTO userlist (user_name, user_pass) VALUES (?, ?)";
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, username);
-            statement.setString(2, PasswordUtils.hashPassword(password));
-            int rowsInserted = statement.executeUpdate();
-
-            return rowsInserted > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();

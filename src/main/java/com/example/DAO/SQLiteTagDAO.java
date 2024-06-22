@@ -1,4 +1,6 @@
-package com.example.Entities;
+package com.example.DAO;
+
+import com.example.DatabaseManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,11 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.DatabaseManager;
+public class SQLiteTagDAO implements TagDAO {
 
-public class Tags {
-
-    public static List<String> getAllTags() {
+    @Override
+    public List<String> getAllTags() {
         String query = "SELECT tag_name FROM taglist";
         List<String> tags = new ArrayList<>();
 
@@ -31,7 +32,8 @@ public class Tags {
         return tags;
     }
 
-    public static int getTagId(String tagName) {
+    @Override
+    public int getTagId(String tagName) {
         String query = "SELECT tag_id FROM taglist WHERE tag_name = ?";
         int tagId = -1;
 
@@ -52,7 +54,8 @@ public class Tags {
         return tagId;
     }
 
-    public static String getTagNameById(int tagId) {
+    @Override
+    public String getTagNameById(int tagId) {
         String query = "SELECT tag_name FROM taglist WHERE tag_id = ?";
         String tagName = null;
 
@@ -73,7 +76,8 @@ public class Tags {
         return tagName;
     }
 
-    public static String getTagColor(String tagName) {
+    @Override
+    public String getTagColor(String tagName) {
         String query = "SELECT tag_color FROM taglist WHERE tag_name = ?";
         String tagColor = null;
 
@@ -94,7 +98,8 @@ public class Tags {
         return tagColor;
     }
 
-    public static List<String> getTagsForTask(int taskId) {
+    @Override
+    public List<String> getTagsForTask(int taskId) {
         String query = "SELECT tag_name FROM taglist tl " +
                 "JOIN tag_connector tc ON tl.tag_id = tc.tag_id " +
                 "WHERE tc.task_id = ?";
@@ -117,7 +122,8 @@ public class Tags {
         return tags;
     }
 
-    public static void saveTagToTask(String tagName, int taskId) {
+    @Override
+    public void saveTagToTask(String tagName, int taskId) {
         int tagId = getTagId(tagName);
 
         if (tagId != -1) {
@@ -137,7 +143,8 @@ public class Tags {
         }
     }
 
-    public static void removeAllTagsFromTask(int taskId) {
+    @Override
+    public void removeAllTagsFromTask(int taskId) {
         String query = "DELETE FROM tag_connector WHERE task_id = ?";
 
         try (Connection connection = DatabaseManager.getConnection();

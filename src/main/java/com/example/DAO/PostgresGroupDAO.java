@@ -1,4 +1,7 @@
-package com.example.Entities;
+package com.example.DAO;
+
+import com.example.DatabaseManager;
+import com.example.Entities.GroupDetails;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,11 +10,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.DatabaseManager;
+public class PostgresGroupDAO implements GroupDAO {
 
-public class Groups {
-
-    public static List<GroupDetails> getGroupsForProject(int projectId) {
+    @Override
+    public List<GroupDetails> getGroupsForProject(int projectId) {
         String query = "SELECT g.group_id, g.position, g.group_name, g.tag_id " +
                        "FROM grouplist g " +
                        "JOIN projects p ON g.proj_id = p.proj_id " +
@@ -40,7 +42,8 @@ public class Groups {
         return groups;
     }
 
-    public static void createGroup(int projectId, int position, String groupName, int tagId) {
+    @Override
+    public void createGroup(int projectId, int position, String groupName, int tagId) {
         String query = "INSERT INTO grouplist (proj_id, position, group_name, tag_id) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DatabaseManager.getConnection();
@@ -55,5 +58,33 @@ public class Groups {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void addTemplateOne(int projectId) {
+        createGroup(projectId, 1, "Group 1", 1);
+        createGroup(projectId, 2, "Group 2", 2);
+    }
+
+    @Override
+    public void addTemplateTwo(int projectId) {
+        createGroup(projectId, 1, "Group 3", 3);
+    }
+
+    @Override
+    public void addTemplateScrum(int projectId) {
+        createGroup(projectId, 1, "Текущий спринт", 4);
+        createGroup(projectId, 2, "В разработке", 6);
+        createGroup(projectId, 3, "На проверке", 7);
+        createGroup(projectId, 4, "Выполнено", 8);
+    }
+
+    @Override
+    public void addTemplateCanban(int projectId) {
+        createGroup(projectId, 1, "Запланировано", 5);
+        createGroup(projectId, 2, "Проектирование", 10);
+        createGroup(projectId, 3, "Разработка", 6);
+        createGroup(projectId, 4, "Тестирование", 7);
+        createGroup(projectId, 5, "Готово", 8);
     }
 }
