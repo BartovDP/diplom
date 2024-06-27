@@ -5,7 +5,9 @@ import java.util.List;
 
 public interface ProjectDAO {
     List<ProjectDetails> getProjectsForUser(String username);
-    int createProject(String projectName, String projectDescription, int userId, String template, String projectGroup, String projectColor);
+    int createProject(String projectName, String projectDescription, 
+                        int userId, String template, String projectGroup,
+                        String projectColor);
     void linkProjectToUser(int projectId, int userId);
     void deleteProject(int projectId);
     ProjectDetails getProjectDetails(int projectId);
@@ -17,3 +19,5 @@ public interface ProjectDAO {
     int getTaskCountForProject(int projectId);
     int getCompletedTaskCountForProject(int projectId);
 }
+
+

@@ -301,9 +301,10 @@
 
 .task-label {
     -fx-text-fill: white;
+    -fx-wrap-text: true;
     -fx-cursor: hand;
     -fx-font-weight: bold;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-text-fill: #34495e;
 }
 
@@ -372,6 +373,7 @@
     -fx-table-cell-border-color: #dcdcdc;
     -fx-border-color: #dcdcdc;
     -fx-border-width: 1;
+    -fx-fixed-cell-size: 40px;
 }
 
 .modern-table .column-header-background {
@@ -385,7 +387,6 @@
     -fx-border-color: #dcdcdc;
     -fx-border-width: 0 0 1 0; /* Only bottom border for rows */
     -fx-font-size: 12px;
-    -fx-padding: 5;
 }
 
 .modern-table .column-header, .modern-table .filler {
@@ -393,7 +394,6 @@
 }
 
 .modern-table .table-cell {
-    -fx-padding: 5;
     -fx-font-size: 12px;
     -fx-text-fill: #333;
 }

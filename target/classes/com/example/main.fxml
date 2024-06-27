@@ -33,14 +33,14 @@
                     <Label text="👤" styleClass="menu-icon"/>
                     <Label fx:id="usernameLabel" styleClass="menu-label1"/>
                 </HBox>
-                <Label text="Change user" onMouseClicked="#handleChangeUserClick" styleClass="menu-label3"/>
+                <Label text="Сменить пользователя" onMouseClicked="#handleChangeUserClick" styleClass="menu-label3"/>
             </VBox>
             
             <!-- Home Section -->
             <VBox spacing="5" styleClass="menu-container2">
                 <HBox spacing="5" styleClass="menu-hbox">
                     <Label text="🏠" styleClass="menu-icon"/>
-                    <Label text="Home" onMouseClicked="#handleHomeClick" styleClass="menu-label1"/>
+                    <Label text="Главная" onMouseClicked="#handleHomeClick" styleClass="menu-label1"/>
                 </HBox>
             </VBox>
 
@@ -48,7 +48,7 @@
             <VBox styleClass="menu-container2">
                 <HBox spacing="5" styleClass="menu-hbox">
                     <Label text="📝" styleClass="menu-icon"/>
-                    <Label text="My Tasks" styleClass="menu-label1"/>
+                    <Label text="Мои задачи" styleClass="menu-label1"/>
                 </HBox>
                 <VBox fx:id="userTasksVBox" styleClass="menu-box"/>
             </VBox>
@@ -57,7 +57,7 @@
             <VBox styleClass="menu-container2">
                 <HBox styleClass="menu-hbox">
                     <Label text="📓" styleClass="menu-icon"/>
-                    <Label text="Projects" styleClass="menu-label1"/>
+                    <Label text="Проекты" styleClass="menu-label1"/>
                 </HBox>
                 <VBox fx:id="projectsVBox" styleClass="menu-container3"/>
             </VBox>
@@ -66,27 +66,27 @@
     <VBox fx:id="centerPanelVBox" HBox.hgrow="ALWAYS" styleClass="center-padding">
         <!-- Home View -->
         <VBox fx:id="homeViewVBox" visible="true" managed="true" VBox.vgrow="ALWAYS" styleClass="home-view" spacing="20">
-            <Label text="Home" styleClass="home-title" />
+            <Label text="Главная" styleClass="home-title" />
             <VBox spacing="20" alignment="CENTER">
                 <VBox spacing="10" styleClass="section" prefWidth="600">
-                    <Label text="Add project" styleClass="section-title" />
+                    <Label text="Добавить проект" styleClass="section-title" />
                     <HBox spacing="25">
-                        <Label text="• Create new project" onMouseClicked="#handleCreateProjectClick" styleClass="home-label" />
+                        <Label text="• Создать проект" onMouseClicked="#handleCreateProjectClick" styleClass="home-label" />
                         <HBox spacing="5">
-                            <Label text="• Join existing:" styleClass="home-label" />
-                            <TextField fx:id="projectKeyField" promptText="Enter project key" styleClass="panel-input"/>
-                            <Button text="Join" onAction="#handleJoinProject" styleClass="button-blue2"/>
+                            <Label text="• Присоединиться:" styleClass="home-label" />
+                            <TextField fx:id="projectKeyField" promptText="Введите ключ проекта" styleClass="panel-input"/>
+                            <Button text="Присоединиться" onAction="#handleJoinProject" styleClass="button-blue2"/>
                         </HBox>
                     </HBox>
                 </VBox>
                 <HBox spacing="20" alignment="CENTER" VBox.vgrow="ALWAYS">
                     <VBox spacing="10" styleClass="section" prefWidth="1000">
-                        <Label text="My tasks" styleClass="section-title" />
+                        <Label text="Мои задачи" styleClass="section-title" />
                         <VBox fx:id="myTasksVBox" spacing="5" />
                     </VBox>
                         
                     <VBox spacing="10" styleClass="section" prefWidth="1000">
-                        <Label text="My projects" styleClass="section-title" />
+                        <Label text="Мои проекты" styleClass="section-title" />
                         <VBox fx:id="myProjectsVBox" spacing="5" />
                     </VBox>
                 </HBox>
@@ -95,9 +95,9 @@
 
         <!-- Project View -->
         <VBox fx:id="projectViewVBox" visible="false" managed="false" VBox.vgrow="ALWAYS">
-            <Label text="Project View" styleClass="project-title" />
+            <Label text="Просмотр проекта" styleClass="project-title" />
             <TabPane VBox.vgrow="ALWAYS" styleClass="tab-pane">
-                <Tab text="Board">
+                <Tab text="Доска">
                     <ScrollPane fitToHeight="true" HBox.hgrow="ALWAYS" styleClass="board-scroll-pane">
                         <content>
                             <HBox fx:id="projectBoardHBox" fillHeight="false" spacing="10">
@@ -111,60 +111,60 @@
                         </content>
                     </ScrollPane>
                 </Tab>
-                <Tab text="Calendar">
+                <Tab text="Календарь">
                     <VBox fx:id="listViewVBox" VBox.vgrow="ALWAYS">
                         <!-- CalendarFX CalendarView -->
                         <!-- --><CalendarView fx:id="calendarView" VBox.vgrow="ALWAYS"/>
                     </VBox>
                 </Tab>
-                <Tab text="Overview">
+                <Tab text="Обзор">
                     <ScrollPane fitToHeight="true" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
                         <content>
                             <VBox fx:id="overviewVBox" styleClass="overview-container" spacing="10" HBox.hgrow="ALWAYS">
-                                <Label text="Project Overview" styleClass="overview-title" />
+                                <Label text="Обзор проекта" styleClass="overview-title" />
                                 
                                 <VBox styleClass="overview-section">
-                                    <Label text="Name:" styleClass="overview-label" />
+                                    <Label text="Название:" styleClass="overview-label" />
                                     <Label fx:id="projectNameLabel" styleClass="overview-value" />
                                 </VBox>
                                 <VBox styleClass="overview-section">
-                                    <Label fx:id="projectProgressTitle" text="Project Progress:" styleClass="overview-label" />
+                                    <Label fx:id="projectProgressTitle" text="Прогресс проекта:" styleClass="overview-label" />
                                     <ProgressBar fx:id="projectProgressBar" styleClass="overview-progress-bar" />
                                 </VBox>
                                 
                                 <VBox styleClass="overview-section">
-                                    <Label text="Description:" styleClass="overview-label" />
+                                    <Label text="Описание:" styleClass="overview-label" />
                                     <Label fx:id="projectDescriptionLabel" styleClass="overview-value" />
                                 </VBox>
                                 
                                 <VBox styleClass="overview-section">
-                                    <Label text="Template:" styleClass="overview-label" />
+                                    <Label text="Шаблон:" styleClass="overview-label" />
                                     <Label fx:id="projectTemplateLabel" styleClass="overview-value" />
                                 </VBox>
                                 
                                 <VBox styleClass="overview-section">
-                                    <Label text="User Access:" styleClass="overview-label" />
+                                    <Label text="Доступ пользователей:" styleClass="overview-label" />
                                     <VBox fx:id="userAccessVBox" styleClass="overview-value" spacing="5" />
                                 </VBox>
                                 
                                 <VBox styleClass="overview-section">
-                                    <Label text="Invite users with project key:" styleClass="overview-label" />
+                                    <Label text="Пригласить пользователей с помощью ключа проекта:" styleClass="overview-label" />
                                     <Label fx:id="projectKeyLabel" onMouseClicked="#handleCopyProjectKey" styleClass="clickable-label overview-value" />
                                 </VBox>                          
-                                <Button text="Delete Project" onAction="#handleDeleteProject" styleClass="button-red" />
+                                <Button text="Удалить проект" onAction="#handleDeleteProject" styleClass="button-red" />
                             </VBox>
                         </content>
                     </ScrollPane>
                 </Tab>
-                <Tab text="Backlog">
+                <Tab text="Бэклог">
                     <VBox fx:id="taskListVBox" VBox.vgrow="ALWAYS">
                         <TableView fx:id="taskTableView" VBox.vgrow="ALWAYS" styleClass="modern-table">
                             <columns>
-                                <TableColumn fx:id="taskNameColumn" text="Task Name" prefWidth="150"/>
-                                <TableColumn fx:id="taskDescColumn" text="Description" prefWidth="300"/>
-                                <TableColumn fx:id="taskStatusColumn" text="Status" prefWidth="100"/>
-                                <TableColumn fx:id="taskBeginDateColumn" text="Begin Date" prefWidth="120"/>
-                                <TableColumn fx:id="taskEndDateColumn" text="End Date" prefWidth="120"/>
+                                <TableColumn fx:id="taskNameColumn" text="Название задачи" prefWidth="150"/>
+                                <TableColumn fx:id="taskDescColumn" text="Описание" prefWidth="300"/>
+                                <TableColumn fx:id="taskStatusColumn" text="Статус" prefWidth="100"/>
+                                <TableColumn fx:id="taskBeginDateColumn" text="Дата начала" prefWidth="120"/>
+                                <TableColumn fx:id="taskEndDateColumn" text="Дата окончания" prefWidth="120"/>
                             </columns>
                         </TableView>
                     </VBox>
@@ -174,26 +174,26 @@
 
         <!-- Create Project View -->
         <VBox fx:id="createProjectViewVBox" HBox.hgrow="ALWAYS" spacing="20" styleClass="panel-transparent" visible="false" managed="false">
-            <Label text="Create Project" styleClass="create-project-title" alignment="CENTER"/>
+            <Label text="Создание проекта" styleClass="create-project-title" alignment="CENTER"/>
             <GridPane hgap="10" vgap="10" alignment="CENTER">
-                <Label text="Project Name" styleClass="create-project-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Label text="Название проекта" styleClass="create-project-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                 <TextField fx:id="newProjectNameField" prefWidth="350" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="panel-input"/>
                 
-                <Label text="Project Description" styleClass="create-project-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label text="Описание проекта" styleClass="create-project-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                 <TextArea fx:id="newProjectDescriptionArea" wrapText="true" prefWidth="350" prefHeight="150" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="panel-input"/>
                 
-                <Label text="Group" styleClass="create-project-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <Label text="Группа" styleClass="create-project-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                 <TextField fx:id="projectGroupField" prefWidth="350" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="panel-input"/>
                 
-                <Label text="Project Template" styleClass="create-project-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <ComboBox fx:id="projectTemplateComboBox" promptText="Select Template" prefWidth="300" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="panel-input"/>
+                <Label text="Шаблон проекта" styleClass="create-project-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="projectTemplateComboBox" promptText="Выберите шаблон" prefWidth="300" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="panel-input"/>
                 
-                <Label text="Color" styleClass="create-project-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <Label text="Цвет" styleClass="create-project-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                 <ColorPicker fx:id="projectColorPicker" prefWidth="300" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="panel-input"/>
             </GridPane>
             <HBox spacing="10" alignment="CENTER">
-                <Button text="Create Project" onAction="#handleCreateProject" prefWidth="150" styleClass="button-blue"/>
-                <Button text="Cancel" onAction="#handleCancelProject" prefWidth="100" styleClass="button-red"/>
+                <Button text="Создать проект" onAction="#handleCreateProject" prefWidth="150" styleClass="button-blue"/>
+                <Button text="Отмена" onAction="#handleCancelProject" prefWidth="100" styleClass="button-red"/>
             </HBox>
         </VBox>
     </VBox>
@@ -205,69 +205,69 @@
         </padding>
         <children>
             <VBox fx:id="projectCreateVBox" spacing="10" visible="false" managed="false">
-                <Label text="Project Create" styleClass="right-panel-title" />
-                <Label text="Project Name" />
+                <Label text="Создание проекта" styleClass="right-panel-title" />
+                <Label text="Название проекта" />
                 <TextField fx:id="projectNameField" />
-                <Label text="Description" />
+                <Label text="Описание" />
                 <TextArea fx:id="projectDescriptionArea" />
-                <Button text="Create Project" onAction="#handleCreateProject"/>
-                <Button text="Cancel" onAction="#handleCancel"/>
+                <Button text="Создать проект" onAction="#handleCreateProject"/>
+                <Button text="Отмена" onAction="#handleCancel"/>
             </VBox>
             <!-- Create Task Section -->
             <VBox fx:id="taskCreateVBox" spacing="15" visible="false" managed="false">
-                <Label text="Task Create" styleClass="right-panel-title" />
+                <Label text="Создание задачи" styleClass="right-panel-title" />
                 <GridPane hgap="10" vgap="10">
-                    <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label text="Название задачи" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <TextField fx:id="taskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Status" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label text="Статус" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                     <ChoiceBox fx:id="taskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Color" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label text="Цвет" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <ColorPicker fx:id="taskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Label text="Task Description" styleClass="right-panel-label"/>
+                <Label text="Описание задачи" styleClass="right-panel-label"/>
                 <TextArea fx:id="taskDescriptionArea" prefWidth="150" prefHeight="100" styleClass="right-panel-input"/>
                 <GridPane hgap="10" vgap="15">
-                    <Label text="Beginning Date:" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label text="Дата начала:" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <DatePicker fx:id="beginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Ending Date:" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label text="Дата окончания:" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                     <DatePicker fx:id="endingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Responsible user:" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label text="Ответственный пользователь:" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <ComboBox fx:id="responsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Tags:" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label text="Теги:" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                     <FlowPane fx:id="taskTagsPane" orientation="HORIZONTAL" prefWidth="200" hgap="5" vgap="7" styleClass="right-panel-flow" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                    <ComboBox fx:id="availableTagsComboBox" promptText="Add Tag" onAction="#handleTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
+                    <ComboBox fx:id="availableTagsComboBox" promptText="Добавить тег" onAction="#handleTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Button text="Create Task" onAction="#handleCreateTask" styleClass="button-blue"/>
-                <Button text="Cancel" onAction="#handleCancel" styleClass="button-grey"/>
+                <Button text="Создать задачу" onAction="#handleCreateTask" styleClass="button-blue"/>
+                <Button text="Отмена" onAction="#handleCancel" styleClass="button-grey"/>
             </VBox>
 
             <!-- Edit Task Section -->
             <VBox fx:id="taskEditVBox" spacing="15" visible="false" managed="false" styleClass="right-panel">
-                <Label text="Edit Task" styleClass="right-panel-title" />
+                <Label text="Редактировать задачу" styleClass="right-panel-title" />
                 <GridPane hgap="10" vgap="10">
-                    <Label text="Task Name" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label text="Название задачи" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <TextField fx:id="editTaskNameField" prefWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Status" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label text="Статус" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                     <ChoiceBox fx:id="editTaskStatusChoiceBox" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Color" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label text="Цвет" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <ColorPicker fx:id="editTaskColorPicker" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Label text="Task Description" styleClass="right-panel-label"/>
+                <Label text="Описание задачи" styleClass="right-panel-label"/>
                 <TextArea fx:id="editTaskDescriptionArea" prefWidth="150" prefHeight="100" styleClass="right-panel-input"/>
                 <GridPane hgap="10" vgap="15">
-                    <Label text="Beginning Date" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label text="Дата начала" styleClass="right-panel-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <DatePicker fx:id="editBeginningDatePicker" prefWidth="200" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Ending Date" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label text="Дата окончания" styleClass="right-panel-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                     <DatePicker fx:id="editEndingDatePicker" prefWidth="200" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Responsible for the Task" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label text="Ответственный за задачу" styleClass="right-panel-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <ComboBox fx:id="editResponsibleComboBox" prefWidth="200" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="right-panel-input"/>
-                    <Label text="Tags" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label text="Теги" styleClass="right-panel-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                     <FlowPane fx:id="editTaskTagsPane" orientation="HORIZONTAL" hgap="5" vgap="5" prefWidth="200" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="right-panel-flow"/>
-                    <ComboBox fx:id="editAvailableTagsComboBox" promptText="Add Tag" onAction="#handleEditTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
+                    <ComboBox fx:id="editAvailableTagsComboBox" promptText="Добавить тег" onAction="#handleEditTagSelection" prefWidth="130" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="right-panel-input"/>
                 </GridPane>
-                <Button text="Save Changes" onAction="#handleEditTask" prefWidth="100" styleClass="button-blue"/>
-                <Button text="Delete Task" onAction="#handleDeleteTask" prefWidth="100" styleClass="button-red"/>
-                <Button text="Cancel" onAction="#handleCancel" prefWidth="100" styleClass="button-grey"/>
+                <Button text="Сохранить" onAction="#handleEditTask" prefWidth="140" styleClass="button-blue"/>
+                <Button text="Удалить задачу" onAction="#handleDeleteTask" prefWidth="140" styleClass="button-red"/>
+                <Button text="Отмена" onAction="#handleCancel" prefWidth="140" styleClass="button-grey"/>
             </VBox>
         </children>
     </VBox>

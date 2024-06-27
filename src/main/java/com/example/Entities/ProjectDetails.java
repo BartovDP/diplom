@@ -9,7 +9,9 @@ public class ProjectDetails {
     private String projectGroup;
     private String projectColor;
 
-    public ProjectDetails(int projectId, String projectName, String projectDescription, String projectTemplate, String shareKey, String projectGroup, String projectColor) {
+    public ProjectDetails(int projectId, String projectName,
+                          String projectDescription, String projectTemplate, 
+                          String shareKey, String projectGroup, String projectColor) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
@@ -19,7 +21,9 @@ public class ProjectDetails {
         this.projectColor = projectColor;
     }
 
-    public ProjectDetails(int projectId, String projectName, String projectDescription, String projectTemplate, String projectGroup, String projectColor) {
+    public ProjectDetails(int projectId, String projectName,
+                          String projectDescription, String projectTemplate,
+                          String projectGroup, String projectColor) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
@@ -56,3 +60,5 @@ public class ProjectDetails {
         return projectColor;
     }
 }
+
+

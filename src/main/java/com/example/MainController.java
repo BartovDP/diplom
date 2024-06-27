@@ -33,12 +33,8 @@ import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import com.calendarfx.view.CalendarView;
 import com.example.DAO.GroupDAO;
-//import com.example.DAO.Groups;
-//import com.example.DAO.Project;
 import com.example.DAO.ProjectDAO;
 import com.example.DAO.TagDAO;
-//import com.example.DAO.Tags;
-//import com.example.DAO.Task;
 import com.example.DAO.TaskDAO;
 import com.example.Entities.GroupDetails;
 import com.example.Entities.ProjectDetails;
@@ -158,14 +154,12 @@ public class MainController {
 
     private Calendar taskCalendar;
     private VBox currentEditTaskBox;
-    //private VBox currentTaskGroupVBox;
     private static String currentTaskName;
-    //private static String currentProjectName;
-    private static int currentProjectId; // ID выбранного проекта
+    private static int currentProjectId;
     private static Thread listeningThread;
     private static Connection connection;
-    private static String username; // Имя пользователя, взятое из интерфейса входа
-    private Set<String> currentTaskTags; // Теги текущей задачи
+    private static String username;
+    private Set<String> currentTaskTags;
 
     private ProjectDAO projectdao;
     private GroupDAO groupdao;
@@ -192,9 +186,9 @@ public class MainController {
         });
 
         projectTemplateComboBox.setItems(FXCollections.observableArrayList("Scrum", "Canban"));
-        taskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done", "Canceled"));
-        taskStatusChoiceBox.setValue("Planned");
-        editTaskStatusChoiceBox.setItems(FXCollections.observableArrayList("Planned", "In Progress", "On Confirmation", "Done"));
+        taskStatusChoiceBox.setItems(FXCollections.observableArrayList("Запланировано", "Выполняется", "На подтверждении", "Выполнено", "Отменено"));
+        taskStatusChoiceBox.setValue("Запланировано");
+        editTaskStatusChoiceBox.setItems(FXCollections.observableArrayList("Запланировано", "Выполняется", "На подтверждении", "Выполнено", "Отменено"));
 
         username = LoginController.getUsername();
         usernameLabel.setText(username);
@@ -239,17 +233,17 @@ public class MainController {
     }
 
     @FXML
-private void handleTaskClick(MouseEvent event) {
-    VBox clickedTaskBox = (VBox) event.getSource();
-    HBox taskLabelContainer = (HBox) clickedTaskBox.getChildren().get(0);
-    Label taskLabel = (Label) taskLabelContainer.getChildren().get(0);
-    currentTaskName = taskLabel.getText();
+    private void handleTaskClick(MouseEvent event) {
+        VBox clickedTaskBox = (VBox) event.getSource();
+        HBox taskLabelContainer = (HBox) clickedTaskBox.getChildren().get(0);
+        Label taskLabel = (Label) taskLabelContainer.getChildren().get(0);
+        currentTaskName = taskLabel.getText();
 
-    fillEditTaskFields(currentTaskName);
-    loadTaskTags(currentTaskName, editTaskTagsPane, editAvailableTagsComboBox);
+        fillEditTaskFields(currentTaskName);
+        loadTaskTags(currentTaskName, editTaskTagsPane, editAvailableTagsComboBox);
 
-    showRightPanel("editTask");
-}
+        showRightPanel("editTask");
+    }
 
     @FXML
     private void handleCreateProject() {
@@ -404,7 +398,7 @@ private void handleTaskClick(MouseEvent event) {
     @FXML
     private void handleDeleteProject() {
         projectdao.deleteProject(currentProjectId);
-        //loadProjectsForUser(username);
+        loadProjectsForUser(username);
         loadProjectGroupsForUser(username);
         setViewVisibility(homeViewVBox);
     }
@@ -465,6 +459,8 @@ private void handleTaskClick(MouseEvent event) {
 
         Label taskLabel = new Label(taskDetails.getTaskName());
         taskLabel.getStyleClass().add("task-label");
+        taskLabel.setWrapText(true);
+        taskLabel.setMaxHeight(50);
 
         Label taskStatus = new Label();
         loadTaskStatus(taskStatus, taskDetails.getTaskStatus(), taskDetails.getEndingDate());
@@ -502,17 +498,17 @@ private void handleTaskClick(MouseEvent event) {
         LocalDate currentDate = LocalDate.now();
         taskStatusLabel.getStyleClass().clear(); // Очистить предыдущие классы стилей
     
-        if ("done".equalsIgnoreCase(status)) {
-            taskStatusLabel.setText("✔ Done");
+        if ("Выполнено".equalsIgnoreCase(status)) {
+            taskStatusLabel.setText("✔ Выполнено");
             taskStatusLabel.getStyleClass().add("status-done");
-        } else if ("on confirmation".equalsIgnoreCase(status)) {
-            taskStatusLabel.setText("On Confirmation");
+        } else if ("На подтверждении".equalsIgnoreCase(status)) {
+            taskStatusLabel.setText("На подтверждении");
             taskStatusLabel.getStyleClass().add("status-on-confirmation");
-        } else if ("canceled".equalsIgnoreCase(status)) {
-            taskStatusLabel.setText("✕ Canceled");
+        } else if ("Отменено".equalsIgnoreCase(status)) {
+            taskStatusLabel.setText("✕ Отменено");
             taskStatusLabel.getStyleClass().add("status-canceled");
         } else if (currentDate.isAfter(endDate)) {
-            taskStatusLabel.setText("🕑 Date Expired");
+            taskStatusLabel.setText("🕑 Просрочено!");
             taskStatusLabel.getStyleClass().add("status-expired");
         }
     }
@@ -615,7 +611,7 @@ private void handleTaskClick(MouseEvent event) {
     
         projectsVBox.getChildren().clear();
 
-        Label createNewLabel = new Label("Create new project");
+        Label createNewLabel = new Label("Создать проект");
         createNewLabel.getStyleClass().add("menu-label3");
         createNewLabel.setOnMouseClicked(event -> setViewVisibility(createProjectViewVBox));
         projectsVBox.getChildren().add(createNewLabel);
@@ -741,7 +737,7 @@ private void handleTaskClick(MouseEvent event) {
             labelBox.getStyleClass().add("colored-container2");
             labelBox.setStyle("-fx-background-color: " + tagColor + ";");
     
-            Label addTaskLabel = new Label("Add task");
+            Label addTaskLabel = new Label("Создать задачу");
             addTaskLabel.setOnMouseClicked(event -> handleAddTask(groupId, taskGroup, tagId));
             addTaskLabel.getStyleClass().add("add-task-label");
     
@@ -788,7 +784,7 @@ private void handleTaskClick(MouseEvent event) {
             int completedTasks = projectdao.getCompletedTaskCountForProject(projectId);
             double progress = totalTasks == 0 ? 0 : (double) completedTasks / totalTasks;
             projectProgressBar.setProgress(progress);
-            projectProgressTitle.setText("Tasks completed: " + completedTasks + "/" + totalTasks);
+            projectProgressTitle.setText("Прогресс выполнения задач: " + completedTasks + "/" + totalTasks);
         }
     }
         

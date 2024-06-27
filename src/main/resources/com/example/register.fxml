@@ -13,20 +13,20 @@
 
 <StackPane prefHeight="720" prefWidth="1280" styleClass="panel-image1" stylesheets="@styles.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="com.example.RegisterController">
     <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400" prefWidth="600" spacing="20" styleClass="panel-transparent" StackPane.alignment="CENTER">
-        <Label styleClass="login-title" text="Account creation" />
+        <Label styleClass="login-title" text="Создание аккаунта" />
         
         <GridPane alignment="CENTER" hgap="10" vgap="10">
             <padding>
                 <Insets bottom="25" left="25" right="25" top="25" />
             </padding>
             
-            <Label styleClass="main-label" text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label styleClass="main-label" text="Логин:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <TextField fx:id="usernameField" styleClass="panel-input" prefHeight="23.0" prefWidth="230.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             
-            <Label styleClass="main-label" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Label styleClass="main-label" text="Пароль:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <PasswordField fx:id="passwordField" styleClass="panel-input" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             
-            <Label styleClass="main-label" text="Confirm Password:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <Label styleClass="main-label" text="Подтвердите пароль:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <PasswordField fx:id="confirmPasswordField" styleClass="panel-input" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          <columnConstraints>
             <ColumnConstraints />
@@ -41,8 +41,8 @@
         
         <Label fx:id="errorMessage" style="-fx-text-fill: red;" styleClass="error-message" text="" />
         
-        <Button onAction="#handleRegisterButtonAction" prefHeight="37.0" prefWidth="137.0" styleClass="button-blue" text="Register" />
+        <Button onAction="#handleRegisterButtonAction" prefHeight="37.0" prefWidth="137.0" styleClass="button-blue" text="Подтвердить" />
         
-        <Label onMouseClicked="#handleAlreadyHaveAccountClick" styleClass="main-label-interact" stylesheets="@styles.css" text="I already have an account" />
+        <Label onMouseClicked="#handleAlreadyHaveAccountClick" styleClass="main-label-interact" stylesheets="@styles.css" text="У меня уже есть аккаунт" />
     </VBox>
 </StackPane>

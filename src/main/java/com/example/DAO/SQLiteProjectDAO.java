@@ -289,7 +289,7 @@ public class SQLiteProjectDAO implements ProjectDAO {
 
     @Override
     public int getCompletedTaskCountForProject(int projectId) {
-        String query = "SELECT COUNT(*) AS task_count FROM tasklist WHERE proj_id = ? AND task_status = 'Done'";
+        String query = "SELECT COUNT(*) AS task_count FROM tasklist WHERE proj_id = ? AND task_status = 'Выполнение'";
         int taskCount = 0;
 
         try (Connection connection = DatabaseManager.getConnection();
